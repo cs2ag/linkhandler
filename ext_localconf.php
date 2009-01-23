@@ -11,14 +11,9 @@ if ($confArr['applyPatch']==1) {
 
 	if ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['tslib/class.tslib_content.php'] !='') {
 		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['tslib/class.ux_tslib_content.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/4.1/class.ux_ux_tslib_content.php';
-	}
-	else {
+	} else {
 	    $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['tslib/class.tslib_content.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/4.1/class.ux_tslib_content.php';
-	}
-	
-}
-else {
-
+	}	
 }
 
 //add linkhandler for "record"
@@ -26,10 +21,7 @@ else {
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['typolinkLinkHandler']['record'] = 'EXT:linkhandler/class.tx_linkhandler_handler.php:&tx_linkhandler_handler';
 
 //register hook
-$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['rtehtmlarea']['browseLinksHook'][]='EXT:linkhandler/class.tx_linkhandler_browselinkshooks.php:tx_linkhandler_browselinkshooks';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/rtehtmlarea/mod3/class.tx_rtehtmlarea_browse_links.php']['browseLinksHook'][]='EXT:linkhandler/class.tx_linkhandler_browselinkshooks.php:tx_linkhandler_browselinkshooks';
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.browse_links.php']['browseLinksHook'][]='EXT:linkhandler/class.tx_linkhandler_browselinkshooks.php:tx_linkhandler_browselinkshooks';
-
-
-
 
 ?>
