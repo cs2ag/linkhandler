@@ -48,15 +48,20 @@ else {
 
 
 
-require_once (t3lib_extMgm::extPath('linkhandler').'classes/class.tx_linkhandler_recordsTree.php');
-require_once (t3lib_extMgm::extPath('linkhandler').'classes/class.TBE_browser_recordListRTE.php');
+require_once (t3lib_extMgm::extPath('linkhandler').'classes/class.tx_linkhandler_recordTab.php');
+
 
 
 
 
 class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
-
-	var $pObj;
+	
+	/**
+	* the browse_links object 
+	*/
+	protected $pObj;
+	
+	protected $allAvailableTabHandlers=array();
 	
 	/**
 	 * initializes the hook object
@@ -73,6 +78,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 				$this->pObj->anchorTypes[] = $key; //for 4.3
 			}
 		}
+		$this->allAvailableTabHandlers=$this->getAllRegisteredTabHandlerClassnames();
 		
 	}
 	
@@ -140,40 +146,56 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 					$href=substr (strrchr ($href, "/"),1);
 				}
 			}
-				
-			if (strtolower(substr($href,0,7))=='record:') {
-					$parts=explode(":",$href);
+			//ask the registered tabHandlers:
+			foreach ($this->allAvailableTabHandlers as $handler) {				
+				$result=call_user_func($handler.'::getLinkBrowserInfoArray',$href,$this->getTabsConfig());				
+				if (count($result)>0 && is_array($result)) {
 					
-					$info['act']='record';
-					
-					//check the linkhandler TSConfig and find out  which config is responsible for the current table:
-					$tabs=$this->getTabsConfig();
-					foreach ($tabs as $key=>$tabConfig) {					
-						if ($parts[1]==$tabConfig['listTables']) {
-							$info['act']=$key;
-						}						
-					}		
-					
-					$info['recordTable']=$parts[1];
-					$info['recordUid']=$parts[2];
-			}				
+					return array_merge($info,$result);
+				}
+			}							
 			return $info;
 	}
 	
-	private  function getTabsConfig() {
+	/**
+	* returns a array of names available tx_linkhandler_tabHandler
+	*/
+	protected function getAllRegisteredTabHandlerClassnames() {
+		$default=array('tx_linkhandler_recordTab');
 		
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'] as $tabHandler) {	
+				list($file,$class) = t3lib_div::revExplode(':',$tabHandler,2);
+				include_once($file);
+				$default[]=$class;		
+			}
+		}	
+		return $default;
+	}
+	
+	/**
+	* returns the complete configuration (tsconfig) of all tabs
+	**/
+	private  function getTabsConfig() {		
 		$tabs=array();
 		if (is_array($this->pObj->thisConfig['tx_linkhandler.'])) {
 			foreach ($this->pObj->thisConfig['tx_linkhandler.'] as $name => $tabConfig) {	
 				if (is_array($tabConfig)) {
 					$key=substr($name,0,-1);
 					$tabs[$key]=$tabConfig;
-				}
-				
+				}				
 			}
-		}
+		}		
 		return $tabs;
 	}
+	/**
+	* returns config for a single tab
+	*/
+	private function getTabConfig($tabKey) {
+		$conf=$this->getTabsConfig();
+		return $conf[$tabKey];
+	}
+	
 	/**
 	 * modifies the menu definition and returns it
 	 *
@@ -187,25 +209,31 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 			$menuDef[$key]['label'] = $tabConfig['label']; // $LANG->getLL('records',1);
 			$menuDef[$key]['url'] = '#';
 			$addPassOnParams.=$this->getaddPassOnParams();
-			
-								
-			$menuDef[$key]['addParams'] = 'onclick="jumpToUrl(\'?act='.$key.'&editorNo='.$this->pObj->editorNo.'&contentTypo3Language='.$this->pObj->contentTypo3Language.'&contentTypo3Charset='.$this->pObj->contentTypo3Charset.$addPassOnParams.'\');return false;"';					
-			
+			$menuDef[$key]['addParams'] = 'onclick="jumpToUrl(\'?act='.$key.'&editorNo='.$this->pObj->editorNo.'&contentTypo3Language='.$this->pObj->contentTypo3Language.'&contentTypo3Charset='.$this->pObj->contentTypo3Charset.$addPassOnParams.'\');return false;"';								
 		}
 		
 		return $menuDef;
 	}
-	
+//MKL	
 	/**
 	* returns additional addonparamaters - required to keep several informations for the RTE linkwizard
 	**/
-	function getaddPassOnParams() {
+	protected function getaddPassOnParams() {
+		$urlParams = '';
 		if (!$this->isRTE()) {
-						$P2=t3lib_div::_GP('P');
-						return t3lib_div::implodeArrayForUrl('P',$P2);
+			$P2=t3lib_div::_GP('P');
+			if (is_array($P2) && !empty($P2) ) {
+			
+				$urlParams = t3lib_div::implodeArrayForUrl('P',$P2);
+			}	
 		}
+		return $urlParams;
 	}
-	private function isRTE() {
+	
+	/**
+	* returns if the current linkwizard is RTE or not
+	**/ 
+	protected function isRTE() {
 		if ($this->pObj->mode=='rte') {
 			return true;
 		}
@@ -225,205 +253,33 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		
 		global $LANG;
 		if (!$this->_isOneOfLinkhandlerTabs($act))
-		    return;
+		    return false;
 		    
-		if ($this->isRTE()) {
-			
+		if ($this->isRTE()) {			
 			if (isset($this->pObj->classesAnchorJSOptions)) {
 				$this->pObj->classesAnchorJSOptions[$act]=@$this->pObj->classesAnchorJSOptions['page']; //works for 4.1.x patch, in 4.2 they make this property protected! -> to enable classselector in 4.2 easoiest is to path rte. 
 			}
-			$content .=$this->pObj->addAttributesForm();
 		}
+		
+		$configuration=$this->getTabConfig($act);
+		//get current href value (diffrent for RTE and normal browselinks)
+		if ($this->isRTE()) {
+           $currentValue=$this->pObj->curUrlInfo['value'];
+       	}
+       	else {
+           $currentValue=$this->pObj->P['currentValue'];
+       	}
+       	//get the tabHandler
+		$tabHandlerClass='tx_linkhandler_recordTab'; //the default tabHandler
+		if (class_exists($configuration['tabHandler'])) {
+			$tabHandlerClass=$configuration['tabHandler'];
+		}
+		$tabHandler=new $tabHandlerClass($this->pObj,$this->getaddPassOnParams,$configuration,$currentValue,$this->isRTE());
+		$content=$tabHandler->getTabContent();	
 			
-		$pagetree = t3lib_div::makeInstance('tx_linkhandler_recordsTree');
-		$pagetree->browselistObj=&$this->pObj;
-		$tree=$pagetree->getBrowsableTree();
-		$cElements = $this->expandPageRecords();
-		$content.= '
-		<!--
-			Wrapper table for page tree / record list:
-		-->
-				<table border="0" cellpadding="0" cellspacing="0" id="typo3-linkPages">
-					<tr>
-						<td class="c-wCell" valign="top">'.$this->pObj->barheader($LANG->getLL('pageTree').':').$tree.'</td>
-						<td class="c-wCell" valign="top">'.$cElements.'</td>
-					</tr>
-				</table>
-				';
 		return $content;
 	}
 	
-	/******************************************************************
-	 *
-	 * Record listing
-	 *
-	 ******************************************************************/
-	/**
-	 * For RTE: This displays all content elements on a page and lets you create a link to the element.
-	 *
-	 * @return	string		HTML output. Returns content only if the ->expandPage value is set (pointing to a page uid to show tt_content records from ...)
-	 */
-	function expandPageRecords()	{	
-		
-		
-		global $TCA,$BE_USER, $BACK_PATH;
-
-		$out='';
-		if ($this->pObj->expandPage>=0 && t3lib_div::testInt($this->pObj->expandPage) && $BE_USER->isInWebMount($this->pObj->expandPage))	{
-			
-			$tables='*';
-			
-			
-			if (isset($this->pObj->thisConfig['tx_linkhandler.'][$this->pObj->act.'.']['listTables'])) {
-				$tables=$this->pObj->thisConfig['tx_linkhandler.'][$this->pObj->act.'.']['listTables'];
-			}
-				// Set array with table names to list:
-			if (!strcmp(trim($tables),'*'))	{
-				$tablesArr = array_keys($TCA);
-			} else {
-				$tablesArr = t3lib_div::trimExplode(',',$tables,1);
-			}
-			reset($tablesArr);
-
-				// Headline for selecting records:
-			$out.=$this->pObj->barheader($GLOBALS['LANG']->getLL('selectRecords').':');
-
-				// Create the header, showing the current page for which the listing is. Includes link to the page itself, if pages are amount allowed tables.
-			$titleLen=intval($GLOBALS['BE_USER']->uc['titleLen']);
-			$mainPageRec = t3lib_BEfunc::getRecordWSOL('pages',$this->pObj->expandPage);
-			$ATag='';
-			$ATag_e='';
-			$ATag2='';
-			if (in_array('pages',$tablesArr))	{
-				$ficon=t3lib_iconWorks::getIcon('pages',$mainPageRec);
-				$ATag="<a href=\"#\" onclick=\"return insertElement('pages', '".$mainPageRec['uid']."', 'db', ".t3lib_div::quoteJSvalue($mainPageRec['title']).", '', '', '".$ficon."','',1);\">";
-				$ATag2="<a href=\"#\" onclick=\"return insertElement('pages', '".$mainPageRec['uid']."', 'db', ".t3lib_div::quoteJSvalue($mainPageRec['title']).", '', '', '".$ficon."','',0);\">";
-				$ATag_alt=substr($ATag,0,-4).",'',1);\">";
-				$ATag_e='</a>';
-			}
-			$picon=t3lib_iconWorks::getIconImage('pages',$mainPageRec,$BACK_PATH,'');
-			$pBicon=$ATag2?'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/plusbullet2.gif','width="18" height="16"').' alt="" />':'';
-			$pText=htmlspecialchars(t3lib_div::fixed_lgd_cs($mainPageRec['title'],$titleLen));
-			$out.=$picon.$ATag2.$pBicon.$ATag_e.$ATag.$pText.$ATag_e.'<br />';
-
-				// Initialize the record listing:
-			$id = $this->pObj->expandPage;
-			$pointer = t3lib_div::intInRange($this->pObj->pointer,0,100000);
-			$perms_clause = $GLOBALS['BE_USER']->getPagePermsClause(1);
-			$pageinfo = t3lib_BEfunc::readPageAccess($id,$perms_clause);
-			$table='';
-
-				// Generate the record list:
-			$dblist = t3lib_div::makeInstance('TBE_browser_recordListRTE');
-			$dblist->hookObj=&$this;
-			$dblist->browselistObj=&$this->pObj;
-			$dblist->this->pObjScript=$this->pObj->this->pObjScript;
-			$dblist->backPath = $GLOBALS['BACK_PATH'];
-			$dblist->thumbs = 0;
-			$dblist->calcPerms = $GLOBALS['BE_USER']->calcPerms($pageinfo);
-			$dblist->noControlPanels=1;
-			$dblist->clickMenuEnabled=0;
-			$dblist->tableList=implode(',',$tablesArr);
-
-			$dblist->start($id,t3lib_div::_GP('table'),$pointer,
-				t3lib_div::_GP('search_field'),
-				t3lib_div::_GP('search_levels'),
-				t3lib_div::_GP('showLimit')
-			);
-
-			$dblist->setDispFields();			
-			$dblist->generateList();
-			$dblist->writeBottom();
-
-				//	Add the HTML for the record list to output variable:
-			$out.=$dblist->HTMLcode;
-			$out.=$dblist->getSearchBox();
-		}
-
-			// Return accumulated content:
-		return $out;
-		
-		
-		
-		
-		/*		
-		global $BE_USER, $BACK_PATH;
-		
-		$out='';
-		$expPageId = $this->pObj->expandPage;		// Set page id (if any) to expand
-
-			// If there is an anchor value (content element reference) in the element reference, then force an ID to expand:
-		if (!$this->pObj->expandPage && $this->pObj->curUrlInfo['cElement'])	{
-			$expPageId = $this->pObj->curUrlInfo['pageid'];	// Set to the current link page id.
-		}
-
-			// Draw the record list IF there is a page id to expand:
-		if ($expPageId && t3lib_div::testInt($expPageId) && $BE_USER->isInWebMount($expPageId))	{
-
-				// Set header:
-			$out.=$this->pObj->barheader($GLOBALS['LANG']->getLL('contentElements').':');
-
-				// Create header for listing, showing the page title/icon:
-			$titleLen=intval($GLOBALS['BE_USER']->uc['titleLen']);
-			$mainPageRec = t3lib_BEfunc::getRecordWSOL('pages',$expPageId);
-			$picon=t3lib_iconWorks::getIconImage('pages',$mainPageRec,'','');
-			$picon.= htmlspecialchars(t3lib_div::fixed_lgd_cs($mainPageRec['title'],$titleLen));
-			$out.=$picon.'<br />';
-
-				// Look up tt_content elements from the expanded page:
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-							'uid,header,hidden,starttime,endtime,fe_group,CType,colpos,bodytext',
-							'tt_content',
-							'pid='.intval($expPageId).
-								t3lib_BEfunc::deleteClause('tt_content').
-								t3lib_BEfunc::versioningPlaceholderClause('tt_content'),
-							'',
-							'colpos,sorting'
-						);
-			$cc = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
-
-				// Traverse list of records:
-			$c=0;
-			while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
-				$c++;
-				$icon=t3lib_iconWorks::getIconImage('tt_content',$row,$BACK_PATH,'');
-				if ($this->pObj->curUrlInfo['act']=='page' && $this->pObj->curUrlInfo['cElement']==$row['uid'])	{
-					$arrCol='<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/blinkarrow_left.gif','width="5" height="9"').' class="c-blinkArrowL" alt="" />';
-				} else {
-					$arrCol='';
-				}
-					// Putting list element HTML together:
-				$out.='<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/ol/join'.($c==$cc?'bottom':'').'.gif','width="18" height="16"').' alt="" />'.
-						$arrCol.
-						'<a href="#" onclick="return link_typo3Page(\''.$expPageId.'\',\'#'.$row['uid'].'\');">'.
-						$icon.
-						htmlspecialchars(t3lib_div::fixed_lgd_cs($row['header'],$titleLen)).
-						'</a><br />';
-
-					// Finding internal anchor points:
-				if (t3lib_div::inList('text,textpic', $row['CType']))	{
-					$split = preg_split('/(<a[^>]+name=[\'"]?([^"\'>[:space:]]+)[\'"]?[^>]*>)/i', $row['bodytext'], -1, PREG_SPLIT_DELIM_CAPTURE);
-
-					foreach($split as $skey => $sval)	{
-						if (($skey%3)==2)	{
-								// Putting list element HTML together:
-							$sval = substr($sval,0,100);
-							$out.='<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/ol/line.gif','width="18" height="16"').' alt="" />'.
-									'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/ol/join'.($skey+3>count($split)?'bottom':'').'.gif','width="18" height="16"').' alt="" />'.
-									'<a href="#" onclick="return link_typo3Page(\''.$expPageId.'\',\'#'.rawurlencode($sval).'\');">'.
-									htmlspecialchars(' <A> '.$sval).
-									'</a><br />';
-						}
-					}
-				}
-			}
-		}
-		return $out;
-		*/
-		
-		
-		
-	}
 
     function _isOneOfLinkhandlerTabs ($key)
     {
