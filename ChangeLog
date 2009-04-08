@@ -1,5 +1,7 @@
 08-04-2009 Michael Klapper <michael.klapper@aoemedia.de>
-	* fix Bug #2626, #3057, #3058 
+	* fix Bug #2626, #3057, #3058, #1488, #1244
+	* Add some PHPDoc
+	* Code indention
 
 23-01-2009 Stefano Cecere <stefano.cecere@krur.com>
 

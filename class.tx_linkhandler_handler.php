@@ -1,43 +1,88 @@
 <?php
+/***************************************************************
+ *  Copyright notice
+ *
+ *  Copyright (c) 2008, Daniel P�tzinger <daniel.poetzinger@aoemedia.de>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
 if (!defined ('TYPO3_MODE'))
 	die ('Access denied.');
 
-
-
+/**
+ * Linkhandler to process custom linking to any kind of configured record.
+ *
+ * @author	Daniel Poetzinger <daniel.poetzinger@aoemedia.de>
+ * @author	Michael Klapper <michael.klapper@aoemedia.de>
+ * @version $Id: $
+ * @date 08.04.2009 - 15:06:25
+ * @package TYPO3
+ * @subpackage tx_linkhandler
+ * @access public
+ */
 class tx_linkhandler_handler {
 
+	/**
+	 * Process the link generation
+	 *
+	 * @param string $linktxt
+	 * @param array $conf
+	 * @param string $linkHandlerKeyword Define the identifier that an record is given
+	 * @param string $linkHandlerValue Table and uid of the requested record like "tt_news:2"
+	 * @param string $link_param Full link params like "record:tt_news:2"
+	 * @param tslib_cObj $pObj
+	 * @return string
+	 */
 	function main($linktxt, $conf, $linkHandlerKeyword, $linkHandlerValue, $link_param, &$pObj) {
-		$this->pObj=&$pObj;
-		$linkConfig=$GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
+		$this->pObj      = &$pObj;
+		$linkConfigArray = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
+		$generatedLink   = '';
+		list ($recordTableName, $recordUid) = t3lib_div::trimExplode(':', $linkHandlerValue);
 
-		if (!is_array($linkConfig)) {
-			return $linktxt;
+			// get the record from $linkhandlerValue
+		$recordRow = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordUid);
+
+			// build the typolink when the requested record and the nessesary cofiguration are available
+		if (
+				( is_array($linkConfigArray) && array_key_exists($recordTableName . '.', $linkConfigArray) ) // record type link configuration available
+			&&
+				(
+					( is_array($recordRow) && !empty($recordRow) ) // recored available
+				||
+					( (int)$linkConfigArray[$recordTableName . '.']['forceLink'] === 1 ) // if the record are hidden ore someting else, force link generation
+				)
+			) {
+			$localcObj = t3lib_div::makeInstance('tslib_cObj');
+			$localcObj->start($recordRow, '');
+
+				// build the full link to the record
+			$generatedLink = $localcObj->typoLink($linktxt, $linkConfigArray[$recordTableName . '.']);
+		} else {
+			$generatedLink = $linktxt;
 		}
-		$linkHandlerData=t3lib_div::trimExplode(':',$linkHandlerValue);
-		if (!isset($linkConfig[$linkHandlerData[0].'.'])) {
-			return $linktxt;
-		}
 
-		$localcObj = t3lib_div::makeInstance('tslib_cObj');
-		$recordRow=$this->getRecordRow($linkHandlerData[0],$linkHandlerData[1]);
-		$localcObj->start($recordRow, '');
-
-		$lconf = array();
-		$lconf=$linkConfig[$linkHandlerData[0].'.'];
-
-		return $localcObj->typoLink($linktxt, $lconf);
-
+		return $generatedLink;
 	}
-
-	function getRecordRow($table,$uid) {
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', $table, 'uid='.intval($uid).$this->pObj->enableFields($table), '', '');
-		$row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-		return $row;
-	}
-
 }
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler.current/class.tx_linkhandler_handler.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler.current/class.tx_linkhandler_handler.php']);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler/class.tx_linkhandler_handler.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler/class.tx_linkhandler_handler.php']);
 }
+
 ?>
