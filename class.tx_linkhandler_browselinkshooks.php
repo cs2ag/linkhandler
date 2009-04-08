@@ -212,10 +212,10 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 
 		return $menuDef;
 	}
-//MKL
+
 	/**
-	* returns additional addonparamaters - required to keep several informations for the RTE linkwizard
-	**/
+	 * returns additional addonparamaters - required to keep several informations for the RTE linkwizard
+	 */
 	protected function getaddPassOnParams() {
 		$urlParams = '';
 		if (!$this->isRTE()) {
