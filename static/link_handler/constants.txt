@@ -1,1 +1,1 @@
-linkhandler.newsSinglePid=6
+linkhandler.newsSinglePid = 6
