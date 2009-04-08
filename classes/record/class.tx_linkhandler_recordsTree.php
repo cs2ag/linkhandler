@@ -1,22 +1,52 @@
 <?php
-if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
+/***************************************************************
+ *  Copyright notice
+ *
+ *  Copyright (c) 2008, Daniel P�tzinger <daniel.poetzinger@aoemedia.de>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+if (!defined ('TYPO3_MODE'))
+	die ('Access denied.');
 
 /**
- * Class which generates the page tree for records, specific version for linkhandler extension 
+ * Class which generates the page tree for records, specific version for linkhandler extension
  *  -> shows records on the selected page and makes them clickable to get the link
- * 
- * 
- * 
+ *
+ * @author	Daniel Poetzinger (AOE media GmbH)
+ * @version $Id: $
+ * @date 08.04.2009 - 15:06:25
+ * @package TYPO3
+ * @subpackage tx_linkhandler
+ * @access public
  */
 class tx_linkhandler_recordsTree extends localPageTree {
+
 	var $browselistObj;
+
 	/**
 	 * Create the page navigation tree in HTML
 	 *
-	 * @param	array		Tree array
-	 * @return	string		HTML output.
+	 * @param array Tree array
+	 * @return	string HTML output.
 	 */
-	function printTree($treeArr='')	{
+	function printTree($treeArr = '') {
 		global $BACK_PATH;
 		$titleLen=intval($GLOBALS['BE_USER']->uc['titleLen']);
 		if (!is_array($treeArr))	$treeArr=$this->tree;
@@ -29,10 +59,10 @@ class tx_linkhandler_recordsTree extends localPageTree {
 			$configured_onlyPids=t3lib_div::trimExplode(',',$this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['onlyPids']);
 			foreach ($configured_onlyPids as $actualPid) {
 				$onlyPids=array_merge($onlyPids,$this->_getRootLinePids($actualPid));
-			}			
+			}
 			$dofiltering=TRUE;
 		}
-		foreach($treeArr as $k => $v)	{			
+		foreach($treeArr as $k => $v)	{
 			$c++;
 			$bgColorClass = ($c+1)%2 ? 'bgColor' : 'bgColor-10';
 			if ($GLOBALS['SOBE']->browser->curUrlInfo['act']=='page' && $GLOBALS['SOBE']->browser->curUrlInfo['pageid']==$v['row']['uid'] && $GLOBALS['SOBE']->browser->curUrlInfo['pageid'])	{
@@ -61,7 +91,7 @@ class tx_linkhandler_recordsTree extends localPageTree {
 					</tr>';
 			}
 		}
-		
+
 		$out='
 
 
@@ -73,21 +103,21 @@ class tx_linkhandler_recordsTree extends localPageTree {
 			</table>';
 		return $out;
 	}
-	
+
 	function _getRootLinePids($pid) {
 			$pids=array();
 			$sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
-			$sys_page->init(true);						
+			$sys_page->init(true);
 			$rootLine = $sys_page->getRootLine($pid, $mpvar);
 			foreach ($rootLine as $v) {
 				$pids[]=$v['uid'];
-			}			
+			}
 			return $pids;
 	}
 	function _getaddPassOnParams() {
 		if ($this->pObj->mode!='rte') {
 				if ($this->cachedParams!='') {
-				
+
 				}else {
 						$P_GET=t3lib_div::_GP('P');
 						$P3=array();
@@ -95,15 +125,15 @@ class tx_linkhandler_recordsTree extends localPageTree {
 							foreach ($P_GET as $k=>$v) {
 								if (!is_array($v) && $k != 'returnUrl' && $k != 'md5ID' && $v != '')
 									$P3[$k]=$v;
-							}												
-						}						
+							}
+						}
 						$this->cachedParams= t3lib_div::implodeArrayForUrl('P',$P3);
 				}
 				return $this->cachedParams;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Wrap the plus/minus icon in a link
 	 *
@@ -123,5 +153,8 @@ class tx_linkhandler_recordsTree extends localPageTree {
 	}
 }
 
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler/classes/record/class.tx_linkhandler_recordsTree.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler/classes/record/class.tx_linkhandler_recordsTree.php']);
+}
 
 ?>

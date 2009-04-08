@@ -1,23 +1,53 @@
 <?php
-if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
+/***************************************************************
+ *  Copyright notice
+ *
+ *  Copyright (c) 2008, Daniel P�tzinger <daniel.poetzinger@aoemedia.de>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 
+if (!defined ('TYPO3_MODE'))
+	die ('Access denied.');
 
 /**
-* class TBE_browser_recordListRTE extends TBE_browser_recordList
-* to return correct linkWraps for RTE link browser
-**/
-
+ * Class TBE_browser_recordListRTE extends TBE_browser_recordList
+ * to return correct linkWraps for RTE link browser
+ *
+ * @author	Daniel Poetzinger (AOE media GmbH)
+ * @version $Id: $
+ * @date 08.04.2009 - 15:06:25
+ * @package TYPO3
+ * @subpackage tx_linkhandler
+ * @access public
+ */
 class TBE_browser_recordListRTE extends TBE_browser_recordList {
 
 	var $hookObj;
 	var $addPassOnParams;
 
 	/**
-	* set the parameters that should be added on the link, in order to keep the required vars for the linkwizard
-	**/
+	 * set the parameters that should be added on the link, in order to keep the required vars for the linkwizard
+	 */
 	public function setAddPassOnParams($addPassOnParams) {
 		$this->addPassOnParams=$addPassOnParams;
 	}
+
 	/**
 	 * Returns the title (based on $code) of a record (from table $table) with the proper link around (that is for "pages"-records a link to the level of that record...)
 	 *
@@ -64,7 +94,6 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 				$ATag_e;
 	}
 
-
 	/**
 	 * Returns additional, local GET parameters to include in the links of the record list.
 	 *
@@ -83,11 +112,10 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 				$this->addPassOnParams;
 		return $str;
 	}
-
-
 }
 
-
-
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler/classes/record/class.TBE_browser_recordListRTE.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler/classes/record/class.TBE_browser_recordListRTE.php']);
+}
 
 ?>
