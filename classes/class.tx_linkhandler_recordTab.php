@@ -55,12 +55,12 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 
 		$P = t3lib_div::_GP('P');
 		if (is_array($P)) {
-			$enviroment = t3lib_div::implodeArrayForUrl('P', $P);
+			$environment = t3lib_div::implodeArrayForUrl('P', $P);
 		}
 
-		$this->addPassOnParams=$addPassOnParams . $enviroment;
-
+		$this->addPassOnParams=$addPassOnParams . $environment;
 	}
+
 	/**
 	 * interface function. should return the correct info array that is required for the link wizard.
 	 * It should detect if the current value is a link where this tabHandler should be responsible.
