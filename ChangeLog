@@ -1,5 +1,5 @@
 08-04-2009 Michael Klapper <michael.klapper@aoemedia.de>
-	* fix Bug #2626, #3057, #3058, #1488, #1244
+	* fix Bug #2626, #3057, #3058, #1488, #1244, #2675
 	* Add some PHPDoc
 	* Code indention
 

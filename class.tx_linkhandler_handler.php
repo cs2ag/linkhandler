@@ -45,14 +45,15 @@ class tx_linkhandler_handler {
 	 * @param array $conf
 	 * @param string $linkHandlerKeyword Define the identifier that an record is given
 	 * @param string $linkHandlerValue Table and uid of the requested record like "tt_news:2"
-	 * @param string $link_param Full link params like "record:tt_news:2"
+	 * @param string $linkParams Full link params like "record:tt_news:2"
 	 * @param tslib_cObj $pObj
 	 * @return string
 	 */
-	function main($linktxt, $conf, $linkHandlerKeyword, $linkHandlerValue, $link_param, &$pObj) {
-		$this->pObj      = &$pObj;
-		$linkConfigArray = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
-		$generatedLink   = '';
+	function main($linktxt, $conf, $linkHandlerKeyword, $linkHandlerValue, $linkParams, &$pObj) {
+		$this->pObj        = &$pObj;
+		$linkConfigArray   = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
+		$generatedLink     = '';
+		$furtherLinkParams = str_replace('record:' . $linkHandlerValue, '', $linkParams); // extract link params like "target", "css-class" or "title"
 		list ($recordTableName, $recordUid) = t3lib_div::trimExplode(':', $linkHandlerValue);
 
 			// get the record from $linkhandlerValue
@@ -70,6 +71,7 @@ class tx_linkhandler_handler {
 			) {
 			$localcObj = t3lib_div::makeInstance('tslib_cObj');
 			$localcObj->start($recordRow, '');
+			$linkConfigArray[$recordTableName . '.']['parameter'] .= $furtherLinkParams;
 
 				// build the full link to the record
 			$generatedLink = $localcObj->typoLink($linktxt, $linkConfigArray[$recordTableName . '.']);
