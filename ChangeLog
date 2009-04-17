@@ -7,9 +7,7 @@
 	* Code indention
 
 23-01-2009 Stefano Cecere <stefano.cecere@krur.com>
-
 	* fix Bug #1342 (rtehtmlarea hook name has changed)
 
 07-09-17 Daniel Pötzinger  <poetzinger@aoemedia.de>
-
 	* Initial release
