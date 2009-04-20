@@ -67,7 +67,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 	 * @access pubic
 	 * @return void
 	 */
-	public function __construct($browseLinksObj, $addPassOnParams, $configuration, $currentLinkValue, $isRTE) {
+	public function __construct($browseLinksObj, $addPassOnParams, $configuration, $currentLinkValue, $isRTE, $currentPid) {
 		$this->browseLinksObj=$browseLinksObj;
 
 		// first step to refactoring (no dependenciy to $browseLinksObj), make the required methodcalls known in membervariables

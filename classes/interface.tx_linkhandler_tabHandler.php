@@ -43,7 +43,7 @@ interface tx_linkhandler_tabHandler {
 	 * @param string $currentLinkValue
 	 * @param boolean $isRTE
 	 */
-	public function __construct($browseLinksObj, $addPassOnParams, $configuration, $currentLinkValue, $isRTE);
+	public function __construct($browseLinksObj, $addPassOnParams, $configuration, $currentLinkValue, $isRTE, $currentPid);
 
 	/**
 	 * should return the correct info array that is required for the link wizard.
