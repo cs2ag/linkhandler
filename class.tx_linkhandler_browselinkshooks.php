@@ -178,7 +178,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 			}
 			//ask the registered tabHandlers:
 			foreach ($this->allAvailableTabHandlers as $handler) {
-				$result=call_user_func($handler.'::getLinkBrowserInfoArray',$href,$this->getTabsConfig());
+				$result = call_user_func(array($handler, 'getLinkBrowserInfoArray'), $href, $this->getTabsConfig());
 				if (count($result)>0 && is_array($result)) {
 
 					return array_merge($info,$result);
