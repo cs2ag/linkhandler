@@ -68,20 +68,20 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 	 * @return void
 	 */
 	public function __construct($browseLinksObj, $addPassOnParams, $configuration, $currentLinkValue, $isRTE, $currentPid) {
-		$this->browseLinksObj=$browseLinksObj;
+		$environment          = '';
+		$this->browseLinksObj = $browseLinksObj;
 
-		// first step to refactoring (no dependenciy to $browseLinksObj), make the required methodcalls known in membervariables
-		$this->isRTE=$isRTE;
-		$this->expandPage=$browseLinksObj->expandPage;
-		$this->configuration=$configuration;
-		$this->pointer=$browseLinksObj->pointer;
+			// first step to refactoring (no dependenciy to $browseLinksObj), make the required methodcalls known in membervariables
+		$this->isRTE         = $isRTE;
+		$this->expandPage    = $browseLinksObj->expandPage;
+		$this->configuration = $configuration;
+		$this->pointer       = $browseLinksObj->pointer;
 
-		$P = t3lib_div::_GP('P');
-		if (is_array($P)) {
-			$environment = t3lib_div::implodeArrayForUrl('P', $P);
+		if (is_array($browseLinksObj->P)) {
+			$environment = t3lib_div::implodeArrayForUrl('P', $browseLinksObj->P);
 		}
 
-		$this->addPassOnParams=$addPassOnParams . $environment;
+		$this->addPassOnParams = $addPassOnParams . $environment;
 	}
 
 	/**
