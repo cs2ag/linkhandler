@@ -1,4 +1,7 @@
 21-04-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fix bug #3452: link handler should respect blindLinkOptions configuration of TCA
+
+21-04-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* fix Bug #3143
 
 17-04-2009 Michael Klapper <michael.klapper@aoemedia.de>

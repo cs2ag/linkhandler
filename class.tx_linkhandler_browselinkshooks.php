@@ -55,11 +55,18 @@ require_once (t3lib_extMgm::extPath('linkhandler').'classes/class.tx_linkhandler
 class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 
 	/**
-	* the browse_links object
-	*/
+	 * the browse_links object
+	 */
 	protected $pObj;
 
 	protected $allAvailableTabHandlers=array();
+
+	/**
+	 * TCA configuration of "blindLinkOptions" for the current field
+	 *
+	 * @var string OPTIONAL Comma seperated list
+	 */
+	protected $blindLinkOptions = '';
 
 	/**
 	 * initializes the hook object
@@ -68,7 +75,12 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	 * @return	void
 	 */
 	public function init($pObj,$params) {
-		$this->pObj=&$pObj;
+		$this->pObj = $pObj;
+
+		if ( (is_array($this->pObj->P['params'])) && (array_key_exists('blindLinkOptions', $this->pObj->P['params'])) ) {
+			$this->blindLinkOptions = $this->pObj->P['params']['blindLinkOptions'];
+		}
+
 		$this->_checkConfigAndGetDefault();
 		$tabs=$this->getTabsConfig();
 		foreach ($tabs as $key=>$tabConfig) {
@@ -79,7 +91,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		$this->allAvailableTabHandlers=$this->getAllRegisteredTabHandlerClassnames();
 
 	}
-	
+
 	/**
 	 * modifies the menu definition and returns it
 	 *
@@ -130,12 +142,13 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		if (class_exists($configuration['tabHandler'])) {
 			$tabHandlerClass=$configuration['tabHandler'];
 		}
+
 		$tabHandler=new $tabHandlerClass($this->pObj,$this->getaddPassOnParams,$configuration,$currentValue,$this->isRTE(), $this->getCurrentPageId());
 		$content=$tabHandler->getTabContent();
 
 		return $content;
 	}
-	
+
 	/**
 	 * adds new items to the currently allowed ones and returns them
 	 *
@@ -153,7 +166,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		}
 		return $allowedItems;
 	}
-	
+
 
 	/**
 	 * checks the current URL and returns a info array. This is used to
@@ -202,7 +215,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		}
 		return $default;
 	}
-	
+
 	/**
 	 * returns current pageid
 	 *
@@ -218,7 +231,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 			return $P['pid'];
 		}
 	}
-	
+
 	/* checks if
 	*	$this->pObj->thisConfig['tx_linkhandler.'] is set, and if not it trys to load default from
 	*	TSConfig key mod.tx_linkhandler.
@@ -249,10 +262,21 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	**/
 	private  function getTabsConfig() {
 		$tabs=array();
+
 		if (is_array($this->pObj->thisConfig['tx_linkhandler.'])) {
 			foreach ($this->pObj->thisConfig['tx_linkhandler.'] as $name => $tabConfig) {
+
 				if (is_array($tabConfig)) {
 					$key=substr($name,0,-1);
+
+						/**
+						 * @internal if we found the current key within the blindLinkOptions in
+						 * the TCA field configuration then skip and do not append this item to the struct
+						 */
+					if (t3lib_div::inList($this->blindLinkOptions, $key)) {
+						continue;
+					}
+
 					$tabs[$key]=$tabConfig;
 				}
 			}
@@ -267,7 +291,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		return $conf[$tabKey];
 	}
 
-	
+
 
 	/**
 	 * returns additional addonparamaters - required to keep several informations for the RTE linkwizard
@@ -296,8 +320,8 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		}
 
 	}
-	
-	
+
+
 
 
     private function _isOneOfLinkhandlerTabs ($key)
