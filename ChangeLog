@@ -1,3 +1,6 @@
+27-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Add Feature #3414: Use linkhandler for backend record "view" button
+
 05-06-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fix bug #3452: link handler should respect blindLinkOptions configuration of TCA
 	* Minor code indention
