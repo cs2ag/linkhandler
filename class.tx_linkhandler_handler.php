@@ -39,6 +39,27 @@ if (!defined ('TYPO3_MODE'))
 class tx_linkhandler_handler {
 
 	/**
+	 * @var array
+	 */
+	protected $injectConfiguration = array();
+
+	/**
+	 * @var boolean
+	 */
+	protected $returnLastURL = false;
+
+	/**
+	 * Setting to retrieve just the URL string instead of the full A-tag
+	 *
+	 * @access public
+	 * @return void
+	 * @author Michael Klapper <michael.klapper@aoemedia.de>
+	 */
+	public function returnOnlyURL() {
+		$this->returnLastURL = true;
+	}
+
+	/**
 	 * Process the link generation
 	 *
 	 * @param string $linktxt
@@ -49,7 +70,8 @@ class tx_linkhandler_handler {
 	 * @param tslib_cObj $pObj
 	 * @return string
 	 */
-	function main($linktxt, $conf, $linkHandlerKeyword, $linkHandlerValue, $linkParams, &$pObj) {
+	public function main($linktxt, $conf, $linkHandlerKeyword, $linkHandlerValue, $linkParams, &$pObj) {
+
 		$this->pObj        = &$pObj;
 		$linkConfigArray   = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
 		$generatedLink     = '';
@@ -69,12 +91,15 @@ class tx_linkhandler_handler {
 					( (int)$linkConfigArray[$recordTableName . '.']['forceLink'] === 1 ) // if the record are hidden ore someting else, force link generation
 				)
 			) {
-			$localcObj = t3lib_div::makeInstance('tslib_cObj');
+			$localcObj = t3lib_div::makeInstance('tslib_cObj'); /* @var $localcObj tslib_cObj */
 			$localcObj->start($recordRow, '');
 			$linkConfigArray[$recordTableName . '.']['parameter'] .= $furtherLinkParams;
 
 				// build the full link to the record
 			$generatedLink = $localcObj->typoLink($linktxt, $linkConfigArray[$recordTableName . '.']);
+
+			if ($this->returnLastURL)
+				$generatedLink = $localcObj->lastTypoLinkUrl;
 		} else {
 			$generatedLink = $linktxt;
 		}

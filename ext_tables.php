@@ -5,17 +5,18 @@ if (!defined ('TYPO3_MODE'))
 t3lib_extMgm::addStaticFile($_EXTKEY,'static/link_handler/', 'link handler');
 
 t3lib_extMgm::addPageTSConfig('
-RTE.default.tx_linkhandler { 
+RTE.default.tx_linkhandler {
 	tt_news {
 		label=News
 		listTables=tt_news
 	}
-} 
+}
 
 mod.tx_linkhandler {
 	tt_news {
 		label=News
 		listTables=tt_news
+		previewPageId = 1
 	}
 }
 ');
