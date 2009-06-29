@@ -1,3 +1,0 @@
-
-  # cat=basic//10; type=boolean; label= Add PATCH (for TYPO3 Versions 4 and 4.1) Not required for 4.2!
-applyPatch = 1

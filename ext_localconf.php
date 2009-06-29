@@ -1,10 +1,7 @@
 <?php
 if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 
-$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['linkhandler']);
-
-//if ( version_compare(TYPO3_version, '4.2.0', '<') )
-if ($confArr['applyPatch']==1) {
+if ( version_compare(TYPO3_version, '4.2.0', '<') ) {
 	//register XCLASSES (adds hooks)
 	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/rtehtmlarea/mod3/class.tx_rtehtmlarea_browse_links.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/4.1/class.ux_tx_rtehtmlarea_browse_links.php';
 	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/class.browse_links.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/4.1/class.ux_browse_links.php';
