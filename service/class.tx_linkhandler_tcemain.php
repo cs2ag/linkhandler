@@ -56,11 +56,13 @@ class tx_linkhandler_tcemain {
 
 			// direct preview
 		if (isset($GLOBALS['_POST']['_savedokview_x']) && !$GLOBALS['BE_USER']->workspace) {
-			$settingFound  = false;
-			$currentPageID = t3lib_div::intval_positive($GLOBALS['_POST']['popViewId']);
+			$settingFound   = false;
+			$currentPageID  = t3lib_div::intval_positive($GLOBALS['_POST']['popViewId']);
+			$rootLineStruct = t3lib_BEfunc::BEgetRootLine($currentPageID);
+			$defaultPageID  = (isset($rootLineStruct[0]) && array_key_exists('uid', $rootLineStruct[0])) ? $rootLineStruct[0]['uid'] : $currentPageID ;
 
 				// if "savedokview" has been pressed and the beUser works in the LIVE workspace open current record in single view
-			$pagesTSC = t3lib_BEfunc::getPagesTSconfig($currentPageID); // get page TSconfig
+			$pagesTSC = t3lib_BEfunc::getPagesTSconfig($currentPageID, $rootLineStruct); // get page TSconfig
 			$handlerConfigurationStruct = $pagesTSC['mod.']['tx_linkhandler.'];
 
 				// search for the current setting for given table
@@ -77,7 +79,7 @@ class tx_linkhandler_tcemain {
 				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
 					$previewPageId = t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
 				} else {
-					$previewPageId = t3lib_div::intval_positive($currentPageID);
+					$previewPageId = t3lib_div::intval_positive($defaultPageID);
 				}
 
 				$queryString = '&eID=linkhandlerPreview&linkParams=record:' . $table . ':' . $id . '&authCode=' . t3lib_div::stdAuthCode($table . ':' . $id, '', 32) . ($fieldArray['sys_language_uid'] > 0 ? '&L=' . $fieldArray['sys_language_uid'] : '');
