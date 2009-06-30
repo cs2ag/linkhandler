@@ -71,7 +71,6 @@ class tx_linkhandler_handler {
 	 * @return string
 	 */
 	public function main($linktxt, $conf, $linkHandlerKeyword, $linkHandlerValue, $linkParams, &$pObj) {
-
 		$this->pObj        = &$pObj;
 		$linkConfigArray   = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
 		$generatedLink     = '';
