@@ -1,12 +1,15 @@
-29-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+03-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Minor code change
+
+30-06-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Improve added feature #3800
 	* Minor code change
 	* Update documentation
 
-29-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+29-06-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Add Feature #3800: Change the "applyPatch" from ext_conf_template to version_compare in ext_localconf.php
 
-27-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+27-06-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Add Feature #3414: Use linkhandler for backend record "view" button
 
 05-06-2009 Michael Klapper <michael.klapper@aoemedia.de>

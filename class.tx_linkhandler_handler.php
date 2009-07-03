@@ -39,11 +39,6 @@ if (!defined ('TYPO3_MODE'))
 class tx_linkhandler_handler {
 
 	/**
-	 * @var array
-	 */
-	protected $injectConfiguration = array();
-
-	/**
 	 * @var boolean
 	 */
 	protected $returnLastURL = false;
@@ -70,8 +65,8 @@ class tx_linkhandler_handler {
 	 * @param tslib_cObj $pObj
 	 * @return string
 	 */
-	public function main($linktxt, $conf, $linkHandlerKeyword, $linkHandlerValue, $linkParams, &$pObj) {
-		$this->pObj        = &$pObj;
+	public function main($linktxt, $conf, $linkHandlerKeyword, $linkHandlerValue, $linkParams, $pObj) {
+		$this->pObj        = $pObj;
 		$linkConfigArray   = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
 		$generatedLink     = '';
 		$furtherLinkParams = str_replace('record:' . $linkHandlerValue, '', $linkParams); // extract link params like "target", "css-class" or "title"
