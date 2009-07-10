@@ -1,3 +1,6 @@
+10-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fix bug #3675: typolink.returnLast not working with record links?
+
 03-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Minor code change
 

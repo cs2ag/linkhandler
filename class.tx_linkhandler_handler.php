@@ -58,14 +58,14 @@ class tx_linkhandler_handler {
 	 * Process the link generation
 	 *
 	 * @param string $linktxt
-	 * @param array $conf
+	 * @param array $typoLinkConfiguration TypoLink Configuration array
 	 * @param string $linkHandlerKeyword Define the identifier that an record is given
 	 * @param string $linkHandlerValue Table and uid of the requested record like "tt_news:2"
 	 * @param string $linkParams Full link params like "record:tt_news:2"
 	 * @param tslib_cObj $pObj
 	 * @return string
 	 */
-	public function main($linktxt, $conf, $linkHandlerKeyword, $linkHandlerValue, $linkParams, $pObj) {
+	public function main($linktxt, $typoLinkConfiguration, $linkHandlerKeyword, $linkHandlerValue, $linkParams, $pObj) {
 		$this->pObj        = $pObj;
 		$linkConfigArray   = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
 		$generatedLink     = '';
@@ -88,6 +88,15 @@ class tx_linkhandler_handler {
 			$localcObj = t3lib_div::makeInstance('tslib_cObj'); /* @var $localcObj tslib_cObj */
 			$localcObj->start($recordRow, '');
 			$linkConfigArray[$recordTableName . '.']['parameter'] .= $furtherLinkParams;
+
+			/**
+			 * @internal Merge the linkhandler configuration from $linkConfigArray with the current $typoLinkConfiguration.
+			 */
+			if ( is_array($typoLinkConfiguration) && !empty($typoLinkConfiguration) ) {
+				if ( array_key_exists('parameter.', $typoLinkConfiguration) )
+					unset($typoLinkConfiguration['parameter.']);
+				$linkConfigArray[$recordTableName . '.'] = array_merge($linkConfigArray[$recordTableName . '.'], $typoLinkConfiguration);
+			}
 
 				// build the full link to the record
 			$generatedLink = $localcObj->typoLink($linktxt, $linkConfigArray[$recordTableName . '.']);
