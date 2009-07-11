@@ -66,7 +66,6 @@ class tx_linkhandler_handler {
 	 * @return string
 	 */
 	public function main($linktxt, $typoLinkConfiguration, $linkHandlerKeyword, $linkHandlerValue, $linkParams, $pObj) {
-		$this->pObj        = $pObj;
 		$linkConfigArray   = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
 		$generatedLink     = '';
 		$furtherLinkParams = str_replace('record:' . $linkHandlerValue, '', $linkParams); // extract link params like "target", "css-class" or "title"
@@ -85,7 +84,8 @@ class tx_linkhandler_handler {
 					( (int)$linkConfigArray[$recordTableName . '.']['forceLink'] === 1 ) // if the record are hidden ore someting else, force link generation
 				)
 			) {
-			$localcObj = t3lib_div::makeInstance('tslib_cObj'); /* @var $localcObj tslib_cObj */
+
+			$localcObj = clone $pObj;
 			$localcObj->start($recordRow, '');
 			$linkConfigArray[$recordTableName . '.']['parameter'] .= $furtherLinkParams;
 
@@ -100,6 +100,10 @@ class tx_linkhandler_handler {
 
 				// build the full link to the record
 			$generatedLink = $localcObj->typoLink($linktxt, $linkConfigArray[$recordTableName . '.']);
+				// update the lastTypoLink* member of the parent tslib_cObj
+			$pObj->lastTypoLinkUrl    = $localcObj->lastTypoLinkUrl;
+			$pObj->lastTypoLinkTarget = $localcObj->lastTypoLinkTarget;
+			$pObj->lastTypoLinkLD     = $localcObj->lastTypoLinkLD;
 
 			if ($this->returnLastURL)
 				$generatedLink = $localcObj->lastTypoLinkUrl;
