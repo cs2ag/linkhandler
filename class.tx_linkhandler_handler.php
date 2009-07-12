@@ -39,22 +39,6 @@ if (!defined ('TYPO3_MODE'))
 class tx_linkhandler_handler {
 
 	/**
-	 * @var boolean
-	 */
-	protected $returnLastURL = false;
-
-	/**
-	 * Setting to retrieve just the URL string instead of the full A-tag
-	 *
-	 * @access public
-	 * @return void
-	 * @author Michael Klapper <michael.klapper@aoemedia.de>
-	 */
-	public function returnOnlyURL() {
-		$this->returnLastURL = true;
-	}
-
-	/**
 	 * Process the link generation
 	 *
 	 * @param string $linktxt
@@ -104,9 +88,6 @@ class tx_linkhandler_handler {
 			$pObj->lastTypoLinkUrl    = $localcObj->lastTypoLinkUrl;
 			$pObj->lastTypoLinkTarget = $localcObj->lastTypoLinkTarget;
 			$pObj->lastTypoLinkLD     = $localcObj->lastTypoLinkLD;
-
-			if ($this->returnLastURL)
-				$generatedLink = $localcObj->lastTypoLinkUrl;
 		} else {
 			$generatedLink = $linktxt;
 		}

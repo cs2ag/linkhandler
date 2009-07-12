@@ -101,7 +101,7 @@ class tx_linkhandler_service_eid {
 		$GLOBALS['TSFE'] = new $tsfeClassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0,0);
 
 		if ( version_compare(TYPO3_version, '4.3.0', '>=') )
-			$GLOBALS['TSFE']->initCahces();
+			$GLOBALS['TSFE']->initCaches();
 
 		$GLOBALS['TSFE']->connectToMySQL();
 		$GLOBALS['TSFE']->initFEuser(); //!TODO first check if already a fe_user session exists - otherwise this line will overwrite the existing one
@@ -124,14 +124,13 @@ class tx_linkhandler_service_eid {
 		$Linkhandler = t3lib_div::makeInstance('tx_linkhandler_handler');
 		/* @var $Linkhandler tx_linkhandler_handler */
 
-		$Linkhandler->returnOnlyURL();
 		$queryString = $Linkhandler->main (
 			'',
-			array(),
+			array('returnLast' => 'url'),
 			$this->linkHandlerKeyword,
 			$this->linkHandlerValue,
 			$this->linkParams,
-			$GLOBALS['TSFE']
+			t3lib_div::makeInstance('tslib_cObj')
 		);
 
 		$fullURL = t3lib_div::getIndpEnv('TYPO3_SITE_URL') . $queryString;

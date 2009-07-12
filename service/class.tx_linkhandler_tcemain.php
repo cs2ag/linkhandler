@@ -52,7 +52,7 @@ class tx_linkhandler_tcemain {
 	 * @access public
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
-	public function processDatamap_preProcessFieldArray(&$fieldArray, $table, $id, &$pObj) {
+	public function processDatamap_preProcessFieldArray(&$fieldArray, $table, $id, $pObj) {
 
 			// direct preview
 		if (isset($GLOBALS['_POST']['_savedokview_x']) && !$GLOBALS['BE_USER']->workspace) {

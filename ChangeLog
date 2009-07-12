@@ -1,3 +1,6 @@
+12-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Optimize Feature #3414: Use linkhandler for backend record "view" button
+
 11-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fix bug #3867: tslib_cObj::getTypoLink_URL - Return just empty string
 
