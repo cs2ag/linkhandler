@@ -207,7 +207,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 
 				// Generate the record list:
 				// unfortunatly we have to set weird dependencies.
-			$dblist = t3lib_div::makeInstance('TBE_browser_recordListRTE');
+			$dblist = t3lib_div::makeInstance('TBE_browser_recordListRTE'); /** @var $dblist TBE_browser_recordListRTE */
 			$dblist->setAddPassOnParams($this->addPassOnParams);
 			$dblist->browselistObj=$this->browseLinksObj;
 			$dblist->this->pObjScript=$this->browseLinksObj->this->pObjScript;
