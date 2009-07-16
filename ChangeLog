@@ -3,6 +3,7 @@
 	* Add support for WS preview link generation
 	* Add support to view records from different language
 	* Increase version number
+	* Fix bug #3927: tx_linkhandler_handler should check for the l18n_parent and fix the recordRow
 
 12-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Optimize Feature #3414: Use linkhandler for backend record "view" button

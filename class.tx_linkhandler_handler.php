@@ -58,6 +58,12 @@ class tx_linkhandler_handler {
 			// get the record from $linkhandlerValue
 		$recordRow = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordUid);
 
+			// check for l18n_parent and fix the recordRow
+		$l18nPointer = ( array_key_exists('transOrigPointerField', $GLOBALS['TCA'][$recordTableName]['ctrl']) ) ? $GLOBALS['TCA'][$recordTableName]['ctrl']['transOrigPointerField'] : '';
+		if ( (array_key_exists($l18nPointer, $recordRow) && $recordRow[$l18nPointer] > 0 && $recordRow['sys_language_uid'] > 0) ) {
+			$recordRow = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordRow[$l18nPointer]);
+		}
+
 			// build the typolink when the requested record and the nessesary cofiguration are available
 		if (
 				( is_array($linkConfigArray) && array_key_exists($recordTableName . '.', $linkConfigArray) ) // record type link configuration available
