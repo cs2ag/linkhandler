@@ -36,20 +36,13 @@ if (!defined ('TYPO3_MODE'))
 
 // include defined interface for hook
 // (for TYPO3 4.x usage this interface is part of the patch)
-$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['linkhandler']);
-if ($confArr['applyPatch']==1) {
-	require_once (t3lib_extMgm::extPath('linkhandler').'patch/interfaces/interface.t3lib_browselinkshook.php');
+if ( version_compare(TYPO3_version, '4.2.0', '<') ) {
+	require_once t3lib_extMgm::extPath('linkhandler') . 'patch/interfaces/interface.t3lib_browselinkshook.php';
+} else {
+	require_once PATH_t3lib . 'interfaces/interface.t3lib_browselinkshook.php';
 }
-else {
-	require_once (PATH_t3lib.'interfaces/interface.t3lib_browselinkshook.php');
-}
-
-
 
 require_once (t3lib_extMgm::extPath('linkhandler').'classes/class.tx_linkhandler_recordTab.php');
-
-
-
 
 
 class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
@@ -89,7 +82,6 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 			}
 		}
 		$this->allAvailableTabHandlers=$this->getAllRegisteredTabHandlerClassnames();
-
 	}
 
 	/**
@@ -120,7 +112,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	public function getTab($act) {
 
 		global $LANG;
-		if (!$this->_isOneOfLinkhandlerTabs($act))
+		if (! $this->_isOneOfLinkhandlerTabs($act) )
 		    return false;
 
 		if ($this->isRTE()) {
@@ -133,11 +125,11 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		//get current href value (diffrent for RTE and normal browselinks)
 		if ($this->isRTE()) {
            $currentValue=$this->pObj->curUrlInfo['value'];
-       	}
-       	else {
+       	} else {
            $currentValue=$this->pObj->P['currentValue'];
        	}
-       	//get the tabHandler
+
+       	// get the tabHandler
 		$tabHandlerClass='tx_linkhandler_recordTab'; //the default tabHandler
 		if (class_exists($configuration['tabHandler'])) {
 			$tabHandlerClass=$configuration['tabHandler'];
@@ -159,8 +151,8 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		if (is_array($this->pObj->thisConfig['tx_linkhandler.'])) {
 			foreach ($this->pObj->thisConfig['tx_linkhandler.'] as $name => $tabConfig) {
 				if (is_array($tabConfig)) {
-					$key=substr($name,0,-1);
-					$allowedItems[]=$key;
+					$key = substr($name,0,-1);
+					$allowedItems[] = $key;
 				}
 			}
 		}
@@ -204,13 +196,13 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	* returns a array of names available tx_linkhandler_tabHandler
 	*/
 	protected function getAllRegisteredTabHandlerClassnames() {
-		$default=array('tx_linkhandler_recordTab');
+		$default = array('tx_linkhandler_recordTab');
 
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'])) {
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'] as $tabHandler) {
 				list($file,$class) = t3lib_div::revExplode(':',$tabHandler,2);
-				include_once($file);
-				$default[]=$class;
+				include_once $file;
+				$default[] = $class;
 			}
 		}
 		return $default;
@@ -241,33 +233,31 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	*/
 	private function _checkConfigAndGetDefault() {
 		global $BE_USER;
-		if ($this->pObj->mode=='rte') {
+
+		if ($this->pObj->mode == 'rte') {
 			$RTEtsConfigParts = explode(':',$this->pObj->RTEtsConfigParams);
 			$RTEsetup = $BE_USER->getTSConfig('RTE',t3lib_BEfunc::getPagesTSconfig($RTEtsConfigParts[5]));
 			$this->pObj->thisConfig = t3lib_BEfunc::RTEsetup($RTEsetup['properties'],$RTEtsConfigParts[0],$RTEtsConfigParts[2],$RTEtsConfigParts[4]);
-		}
+		} elseif (! is_array($this->pObj->thisConfig['tx_linkhandler.']) ) {
+			$P = t3lib_div::_GP('P');
+			$pid = $P['pid'];
+			$modTSconfig = $GLOBALS["BE_USER"]->getTSConfig("mod.tx_linkhandler", t3lib_BEfunc::getPagesTSconfig($pid));
 
-		elseif (!is_array($this->pObj->thisConfig['tx_linkhandler.'])) {
-			$P=t3lib_div::_GP('P');
-			$pid=$P['pid'];
-			$modTSconfig = $GLOBALS["BE_USER"]->getTSConfig("mod.tx_linkhandler",t3lib_BEfunc::getPagesTSconfig($pid));
-			//print_r($modTSconfig);
-			$this->pObj->thisConfig['tx_linkhandler.']=$modTSconfig['properties'];
+			$this->pObj->thisConfig['tx_linkhandler.'] = $modTSconfig['properties'];
 		}
-
 	}
 
 	/**
 	* returns the complete configuration (tsconfig) of all tabs
 	**/
 	private  function getTabsConfig() {
-		$tabs=array();
+		$tabs = array();
 
 		if (is_array($this->pObj->thisConfig['tx_linkhandler.'])) {
 			foreach ($this->pObj->thisConfig['tx_linkhandler.'] as $name => $tabConfig) {
 
 				if (is_array($tabConfig)) {
-					$key=substr($name,0,-1);
+					$key = substr($name,0,-1);
 
 						/**
 						 * @internal if we found the current key within the blindLinkOptions in
@@ -277,7 +267,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 						continue;
 					}
 
-					$tabs[$key]=$tabConfig;
+					$tabs[$key] = $tabConfig;
 				}
 			}
 		}
@@ -301,7 +291,6 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		if (!$this->isRTE()) {
 			$P2=t3lib_div::_GP('P');
 			if (is_array($P2) && !empty($P2) ) {
-
 				$urlParams = t3lib_div::implodeArrayForUrl('P',$P2);
 			}
 		}
@@ -312,20 +301,10 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	* returns if the current linkwizard is RTE or not
 	**/
 	protected function isRTE() {
-		if ($this->pObj->mode=='rte') {
-			return true;
-		}
-		else {
-			return false;
-		}
-
+		return  ($this->pObj->mode == 'rte');
 	}
 
-
-
-
-    private function _isOneOfLinkhandlerTabs ($key)
-    {
+    private function _isOneOfLinkhandlerTabs ($key) {
         foreach ($this->pObj->thisConfig['tx_linkhandler.'] as $name => $tabConfig) {
             if (is_array($tabConfig)) {
                 $akey = substr($name, 0, - 1);
