@@ -77,8 +77,8 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 		$this->configuration = $configuration;
 		$this->pointer       = $browseLinksObj->pointer;
 
-		if (is_array($browseLinksObj->P)) {
-			$environment = t3lib_div::implodeArrayForUrl('P', $browseLinksObj->P);
+		if (is_array(t3lib_div::_GP('P'))) {
+			$environment = t3lib_div::implodeArrayForUrl('P', t3lib_div::_GP('P'));
 		}
 
 		$this->addPassOnParams = $addPassOnParams . $environment;
@@ -130,7 +130,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 			$content .= $this->browseLinksObj->addAttributesForm();
 		}
 
-		$pagetree = t3lib_div::makeInstance('tx_linkhandler_recordsTree');
+		$pagetree = t3lib_div::makeInstance('tx_linkhandler_recordsTree'); /* @var $pagetree tx_linkhandler_recordsTree */
 		$pagetree->browselistObj = $this->browseLinksObj;
 		$tree = $pagetree->getBrowsableTree();
 		$cElements = $this->expandPageRecords();
