@@ -1,3 +1,9 @@
+16-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Minnor code changes 
+	* Add support for WS preview link generation
+	* Add support to view records from different language
+	* Increase version number
+
 12-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Optimize Feature #3414: Use linkhandler for backend record "view" button
 

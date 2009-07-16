@@ -53,7 +53,7 @@ class tx_linkhandler_service_eid {
 	 * @example "record:tt_news:2"
 	 * @var string
 	 */
-	protected $linkParams = '';
+	protected $linkHandlerParams = '';
 
 	/**
 	 * @example "tt_news:2"
@@ -70,17 +70,53 @@ class tx_linkhandler_service_eid {
 	protected $linkHandlerKeyword = '';
 
 	/**
+	 * Indicate that the current request is from any WS
+	 *
+	 * @var boolean
+	 */
+	protected $isWsPreview = false;
+
+	/**
+	 * sys_language_uid
+	 *
+	 * @var integer
+	 */
+	protected $languageId = 0;
+
+	/**
+	 * Contains all required values to build an WS preview link.
+	 *
+	 * The Value is seperated by ":"#
+	 * - Workspace ID
+	 * - Backend user ID
+	 * - Time to live for the WS link
+	 *
+	 * @example 1:5:172800
+	 * @var string|null
+	 */
+	protected $WSPreviewValue = null;
+
+	/**
 	 * @return void
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	public function __construct() {
-		$authCode                       = (string)t3lib_div::_GP('authCode');
-		$this->linkParams               = t3lib_div::_GP('linkParams');
-		list($this->linkHandlerKeyword) = explode(':', $this->linkParams);
-		$this->linkHandlerValue         = str_replace($this->linkHandlerKeyword . ':', '', $this->linkParams);
+		$authCode         = (string)t3lib_div::_GP('authCode');
+		$linkParams       = t3lib_div::_GP('linkParams');
+		$this->languageId = t3lib_div::_GP('L');
+
+			// extract the linkhandler and WS preview prameter
+		if ( strpos($linkParams, ';') > 0) {
+			list ($this->linkHandlerParams, $this->WSPreviewValue)  = explode(';', $linkParams);
+			$this->isWsPreview = true;
+		} else
+			$this->linkHandlerParams = $linkParams;
+
+		list($this->linkHandlerKeyword) = explode(':', $this->linkHandlerParams);
+		$this->linkHandlerValue         = str_replace($this->linkHandlerKeyword . ':', '', $this->linkHandlerParams);
 
 			// check the authCode
-		if ( t3lib_div::stdAuthCode($this->linkHandlerValue, '', 32) !== $authCode )  {
+		if ( t3lib_div::stdAuthCode($linkParams . $this->languageId, '', 32) !== $authCode )  {
 			header('401 Access denied.');
 			exit('Access denied.');
 		}
@@ -111,8 +147,8 @@ class tx_linkhandler_service_eid {
 		$GLOBALS['TSFE']->getCompressedTCarray();
 		$GLOBALS['TSFE']->initTemplate();
 		$GLOBALS['TSFE']->getConfigArray();
+		$GLOBALS['TSFE']->cObj = t3lib_div::makeInstance('tslib_cObj');
 	}
-
 
 	/**
 	 * @example ?eID=linkhandlerPreview&linkParams=record:tx_aoetirepresenter_tire:40&id=23
@@ -120,18 +156,40 @@ class tx_linkhandler_service_eid {
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	public function process() {
+		$typoLinkSettingsArray = array (
+			'returnLast'       => 'url',
+			'additionalParams' => '&L=' . $this->languageId
+		);
+
+			// if we need a WS preview link we need to disable the realUrl and simulateStaticDocuments
+		if ($this->isWsPreview === true) {
+			$GLOBALS['TSFE']->config['config']['tx_realurl_enable'] = 0;
+			$GLOBALS['TSFE']->config['config']['simulateStaticDocuments'] = 0;
+		}
 
 		$Linkhandler = t3lib_div::makeInstance('tx_linkhandler_handler');
 		/* @var $Linkhandler tx_linkhandler_handler */
 
-		$queryString = $Linkhandler->main (
+		$linkString = $Linkhandler->main (
 			'',
-			array('returnLast' => 'url'),
+			$typoLinkSettingsArray,
 			$this->linkHandlerKeyword,
 			$this->linkHandlerValue,
-			$this->linkParams,
-			t3lib_div::makeInstance('tslib_cObj')
+			$this->linkHandlerParams,
+			$GLOBALS['TSFE']->cObj
 		);
+
+		if ($this->isWsPreview === true) {
+			list ($wsId, $userId, $timeToLive) = explode(':', $this->WSPreviewValue);
+
+			$queryString = 'index.php?ADMCMD_prev='.t3lib_BEfunc::compilePreviewKeyword (
+				str_replace('index.php?', '', $GLOBALS['TSFE']->cObj->lastTypoLinkLD['totalURL']) . '&ADMCMD_previewWS=' . $wsId,
+				$userId,
+				$timeToLive
+			);
+		} else {
+			$queryString = $linkString;
+		}
 
 		$fullURL = t3lib_div::getIndpEnv('TYPO3_SITE_URL') . $queryString;
 

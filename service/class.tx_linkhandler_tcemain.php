@@ -54,14 +54,12 @@ class tx_linkhandler_tcemain {
 	 */
 	public function processDatamap_preProcessFieldArray(&$fieldArray, $table, $id, $pObj) {
 
-			// direct preview
-		if (isset($GLOBALS['_POST']['_savedokview_x']) && !$GLOBALS['BE_USER']->workspace) {
+		if ( isset($GLOBALS['_POST']['_savedokview_x']) ) {
 			$settingFound   = false;
 			$currentPageID  = t3lib_div::intval_positive($GLOBALS['_POST']['popViewId']);
 			$rootLineStruct = t3lib_BEfunc::BEgetRootLine($currentPageID);
 			$defaultPageID  = (isset($rootLineStruct[0]) && array_key_exists('uid', $rootLineStruct[0])) ? $rootLineStruct[0]['uid'] : $currentPageID ;
 
-				// if "savedokview" has been pressed and the beUser works in the LIVE workspace open current record in single view
 			$pagesTSC = t3lib_BEfunc::getPagesTSconfig($currentPageID, $rootLineStruct); // get page TSconfig
 			$handlerConfigurationStruct = $pagesTSC['mod.']['tx_linkhandler.'];
 
@@ -75,6 +73,9 @@ class tx_linkhandler_tcemain {
 			}
 
 			if ($settingFound) {
+				t3lib_div::loadTCA($table);
+				$l18nPointer = ( array_key_exists('transOrigPointerField', $GLOBALS['TCA'][$table]['ctrl']) ) ? $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] : '';
+				$recordArray = t3lib_BEfunc::getRecord($table, $id);
 
 				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
 					$previewPageId = t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
@@ -82,7 +83,30 @@ class tx_linkhandler_tcemain {
 					$previewPageId = t3lib_div::intval_positive($defaultPageID);
 				}
 
-				$queryString = '&eID=linkhandlerPreview&linkParams=record:' . $table . ':' . $id . '&authCode=' . t3lib_div::stdAuthCode($table . ':' . $id, '', 32) . ($fieldArray['sys_language_uid'] > 0 ? '&L=' . $fieldArray['sys_language_uid'] : '');
+				if ($GLOBALS['BE_USER']->workspace != 0) {
+					$timeToLiveHours = ( intval($GLOBALS['BE_USER']->getTSConfigVal('options.workspaces.previewLinkTTLHours')) ) ? intval($GLOBALS['BE_USER']->getTSConfigVal('options.workspaces.previewLinkTTLHours')) : 24*2 ;
+					$WSPreviewValue = ';' . $GLOBALS['BE_USER']->workspace . ':' . $GLOBALS['BE_USER']->user['uid'] . ':' . (60 * 60 * $timeToLiveHours);
+
+						// get record UID for
+					if ( array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) {
+						$id = $recordArray[$l18nPointer];
+					} elseif ( array_key_exists('t3ver_oid', $recordArray) )
+						$id = $recordArray['t3ver_oid'];
+
+				} else {
+					$WSPreviewValue = '';
+
+					if ( (array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) ) {
+						$id = $recordArray[$l18nPointer];
+					}
+				}
+
+				$linkParamValue = 'record:' . $table . ':' . $id ;
+
+				$queryString   = '&eID=linkhandlerPreview&linkParams=' . $linkParamValue . $WSPreviewValue;
+				$languageParam = '&L=' . $recordArray['sys_language_uid'];
+				$queryString  .= $languageParam . '&authCode=' . t3lib_div::stdAuthCode($linkParamValue . $WSPreviewValue . $recordArray['sys_language_uid'], '', 32);
+
 				$GLOBALS['_POST']['viewUrl'] = $this->buildViewUrl($previewPageId) . '?id=' . $previewPageId . $queryString;
 			}
 		}
