@@ -73,6 +73,18 @@ class tx_linkhandler_handler {
 			$localcObj->start($recordRow, '');
 			$linkConfigArray[$recordTableName . '.']['parameter'] .= $furtherLinkParams;
 
+			$linkConfigArray[$recordTableName . '.']['additionalParams'] = $localcObj->stdWrap($linkConfigArray[$recordTableName . '.']['additionalParams'],$linkConfigArray[$recordTableName . '.']['additionalParams.']);
+			unset($linkConfigArray[$recordTableName . '.']['additionalParams.']);
+
+			if ( array_key_exists('additionalParams', $typoLinkConfiguration) ) {
+				$typoLinkConfiguration['additionalParams'] = t3lib_div::implodeArrayForUrl ( '',
+					t3lib_div::array_merge_recursive_overrule (
+						t3lib_div::explodeUrl2Array($linkConfigArray[$recordTableName . '.']['additionalParams']),
+						t3lib_div::explodeUrl2Array($typoLinkConfiguration['additionalParams'])
+					)
+				);
+			}
+
 			/**
 			 * @internal Merge the linkhandler configuration from $linkConfigArray with the current $typoLinkConfiguration.
 			 */
