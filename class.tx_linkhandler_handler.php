@@ -39,6 +39,12 @@ if (!defined ('TYPO3_MODE'))
 class tx_linkhandler_handler {
 
 	/**
+	 * @var tslib_cObj
+	 */
+	protected $localcObj = null;
+
+
+	/**
 	 * Process the link generation
 	 *
 	 * @param string $linktxt
@@ -55,62 +61,132 @@ class tx_linkhandler_handler {
 		$furtherLinkParams = str_replace('record:' . $linkHandlerValue, '', $linkParams); // extract link params like "target", "css-class" or "title"
 		list ($recordTableName, $recordUid) = t3lib_div::trimExplode(':', $linkHandlerValue);
 
-			// get the record from $linkhandlerValue
-		$recordRow = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordUid);
+		$recordArray = $this->getCurrentRecord($recordTableName, $recordUid);
 
-			// check for l18n_parent and fix the recordRow
-		$l18nPointer = ( array_key_exists('transOrigPointerField', $GLOBALS['TCA'][$recordTableName]['ctrl']) ) ? $GLOBALS['TCA'][$recordTableName]['ctrl']['transOrigPointerField'] : '';
-		if ( (array_key_exists($l18nPointer, $recordRow) && $recordRow[$l18nPointer] > 0 && $recordRow['sys_language_uid'] > 0) ) {
-			$recordRow = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordRow[$l18nPointer]);
-		}
+		if ( $this->isRecordLinkable($recordTableName, $linkConfigArray, $recordArray) ) {
 
-			// build the typolink when the requested record and the nessesary cofiguration are available
-		if (
-				( is_array($linkConfigArray) && array_key_exists($recordTableName . '.', $linkConfigArray) ) // record type link configuration available
-			&&
-				(
-					( is_array($recordRow) && !empty($recordRow) ) // recored available
-				||
-					( (int)$linkConfigArray[$recordTableName . '.']['forceLink'] === 1 ) // if the record are hidden ore someting else, force link generation
-				)
-			) {
-
-			$localcObj = clone $pObj;
-			$localcObj->start($recordRow, '');
+			$this->localcObj = clone $pObj;
+			$this->localcObj->start($recordArray, '');
 			$linkConfigArray[$recordTableName . '.']['parameter'] .= $furtherLinkParams;
 
-			$linkConfigArray[$recordTableName . '.']['additionalParams'] = $localcObj->stdWrap($linkConfigArray[$recordTableName . '.']['additionalParams'],$linkConfigArray[$recordTableName . '.']['additionalParams.']);
-			unset($linkConfigArray[$recordTableName . '.']['additionalParams.']);
-
-			if ( array_key_exists('additionalParams', $typoLinkConfiguration) ) {
-				$typoLinkConfiguration['additionalParams'] = t3lib_div::implodeArrayForUrl ( '',
-					t3lib_div::array_merge_recursive_overrule (
-						t3lib_div::explodeUrl2Array($linkConfigArray[$recordTableName . '.']['additionalParams']),
-						t3lib_div::explodeUrl2Array($typoLinkConfiguration['additionalParams'])
-					)
-				);
-			}
-
-			/**
-			 * @internal Merge the linkhandler configuration from $linkConfigArray with the current $typoLinkConfiguration.
-			 */
-			if ( is_array($typoLinkConfiguration) && !empty($typoLinkConfiguration) ) {
-				if ( array_key_exists('parameter.', $typoLinkConfiguration) )
-					unset($typoLinkConfiguration['parameter.']);
-				$linkConfigArray[$recordTableName . '.'] = array_merge($linkConfigArray[$recordTableName . '.'], $typoLinkConfiguration);
-			}
+			$currentLinkConfigurationArray = $this->mergeTypoScript($linkConfigArray , $typoLinkConfiguration, $recordTableName);
 
 				// build the full link to the record
-			$generatedLink = $localcObj->typoLink($linktxt, $linkConfigArray[$recordTableName . '.']);
-				// update the lastTypoLink* member of the parent tslib_cObj
-			$pObj->lastTypoLinkUrl    = $localcObj->lastTypoLinkUrl;
-			$pObj->lastTypoLinkTarget = $localcObj->lastTypoLinkTarget;
-			$pObj->lastTypoLinkLD     = $localcObj->lastTypoLinkLD;
+			$generatedLink = $this->localcObj->typoLink($linktxt, $currentLinkConfigurationArray);
+
+			$this->updateParentLastTypoLinkMember($pObj);
 		} else {
 			$generatedLink = $linktxt;
 		}
 
 		return $generatedLink;
+	}
+
+
+	/**
+	 * Indicate that the requested link can be created or not.
+	 *
+	 * @access protected
+	 * @return boolean
+	 * @author Michael Klapper <michael.klapper@aoemedia.de>
+	 */
+	protected function isRecordLinkable($recordTableName, $linkConfigArray, $recordArray) {
+		$isLinkable = false;
+
+			// record type link configuration available
+		if ( is_array($linkConfigArray) && array_key_exists($recordTableName . '.', $linkConfigArray) )  {
+
+			if (
+					( is_array($recordArray) && !empty($recordArray) ) // recored available
+				||
+					( (int)$linkConfigArray[$recordTableName . '.']['forceLink'] === 1 ) // if the record are hidden ore someting else, force link generation
+				) {
+
+				$isLinkable = true;
+			}
+		}
+
+		return $isLinkable;
+	}
+
+
+	/**
+	 * Find the current record to work with.
+	 *
+	 * This method keeps attention on the l18n_parent field and retrieve the original record.
+	 *
+	 * @param string $recordTableName
+	 * @param integer $recordUid
+	 * @access protected
+	 * @return array
+	 * @author Michael Klapper <michael.klapper@aoemedia.de>
+	 */
+	protected function getCurrentRecord($recordTableName, $recordUid) {
+		$recordArray = array();
+			// check for l18n_parent and fix the recordRow
+		$l18nPointer = ( array_key_exists('transOrigPointerField', $GLOBALS['TCA'][$recordTableName]['ctrl']) )
+							? $GLOBALS['TCA'][$recordTableName]['ctrl']['transOrigPointerField']
+							: '';
+
+		$recordArray = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordUid);
+
+		if ( (array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) ) {
+			$recordArray = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordArray[$l18nPointer]);
+		}
+
+		return $recordArray;
+	}
+
+
+	/**
+	 * Update the lastTypoLink* member of the $pObj
+	 *
+	 * @param tslib_cObj $pObj
+	 * @access public
+	 * @return void
+	 * @author Michael Klapper <michael.klapper@aoemedia.de>
+	 */
+	protected function updateParentLastTypoLinkMember($pObj) {
+		$pObj->lastTypoLinkUrl    = $this->localcObj->lastTypoLinkUrl;
+		$pObj->lastTypoLinkTarget = $this->localcObj->lastTypoLinkTarget;
+		$pObj->lastTypoLinkLD     = $this->localcObj->lastTypoLinkLD;
+	}
+
+
+	/**
+	 * Merge all TypoScript for the typoLink from the global and local defined settings.
+	 *
+	 * @access protected
+	 * @return array
+	 * @author Michael Klapper <michael.klapper@aoemedia.de>
+	 */
+	protected function mergeTypoScript($linkConfigArray , $typoLinkConfigurationArray, $recordTableName) {
+
+			// precompile the "additionalParams"
+		$linkConfigArray[$recordTableName . '.']['additionalParams'] = $this->localcObj->stdWrap($linkConfigArray[$recordTableName . '.']['additionalParams'],$linkConfigArray[$recordTableName . '.']['additionalParams.']);
+		unset($linkConfigArray[$recordTableName . '.']['additionalParams.']);
+
+			// merge recursive the "additionalParams" from "$linkConfigArray" with the "$typoLinkConfigurationArray"
+		if ( array_key_exists('additionalParams', $typoLinkConfigurationArray) ) {
+			$typoLinkConfigurationArray['additionalParams'] = t3lib_div::implodeArrayForUrl ( '',
+				t3lib_div::array_merge_recursive_overrule (
+					t3lib_div::explodeUrl2Array($linkConfigArray[$recordTableName . '.']['additionalParams']),
+					t3lib_div::explodeUrl2Array($typoLinkConfigurationArray['additionalParams'])
+				)
+			);
+		}
+
+		/**
+		 * @internal Merge the linkhandler configuration from $linkConfigArray with the current $typoLinkConfiguration.
+		 */
+		if ( is_array($typoLinkConfigurationArray) && !empty($typoLinkConfigurationArray) ) {
+			if ( array_key_exists('parameter.', $typoLinkConfigurationArray) )
+				unset($typoLinkConfigurationArray['parameter.']);
+
+			$linkConfigArray[$recordTableName . '.'] = array_merge($linkConfigArray[$recordTableName . '.'], $typoLinkConfigurationArray);
+		}
+
+		return $linkConfigArray[$recordTableName . '.'];
 	}
 }
 

@@ -1,4 +1,7 @@
 16-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Refactor the tx_linkhandler_handler
+
+16-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Minnor code changes 
 	* Add support for WS preview link generation
 	* Add support to view records from different language
