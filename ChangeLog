@@ -1,3 +1,7 @@
+03-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Minnor code changes
+	* Make the tx_linkhandler_handler::getCurrentRecord more robustness
+
 16-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Refactor the tx_linkhandler_handler
 

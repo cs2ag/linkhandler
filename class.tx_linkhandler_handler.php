@@ -130,7 +130,7 @@ class tx_linkhandler_handler {
 
 		$recordArray = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordUid);
 
-		if ( (array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) ) {
+		if ( is_array($recordArray) && (array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) ) {
 			$recordArray = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordArray[$l18nPointer]);
 		}
 
