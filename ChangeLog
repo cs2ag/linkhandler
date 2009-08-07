@@ -1,3 +1,6 @@
+07-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fix bug #3784: Tabs in Linkview are jumping
+
 03-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Minnor code changes
 	* Make the tx_linkhandler_handler::getCurrentRecord more robustness

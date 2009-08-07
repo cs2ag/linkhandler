@@ -67,7 +67,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	 * @param	browse_links	parent browse_links object
 	 * @return	void
 	 */
-	public function init($pObj,$params) {
+	public function init($pObj, $params) {
 		$this->pObj = $pObj;
 
 		if ( (is_array($this->pObj->P['params'])) && (array_key_exists('blindLinkOptions', $this->pObj->P['params'])) ) {
@@ -181,6 +181,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 					$href=substr (strrchr ($href, "/"),1);
 				}
 			}
+
 			//ask the registered tabHandlers:
 			foreach ($this->allAvailableTabHandlers as $handler) {
 				$result = call_user_func(array($handler, 'getLinkBrowserInfoArray'), $href, $this->getTabsConfig());
@@ -208,20 +209,56 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		return $default;
 	}
 
+
 	/**
-	 * returns current pageid
+	 * Return the ID of current page.
 	 *
+	 * @access private
 	 * @return integer
+	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	private function getCurrentPageId() {
+		$pageID = 0;
+
 		if ($this->isRTE()) {
 			$confParts= explode (':',$this->pObj->RTEtsConfigParams);
-			return $confParts[5];
+			$pageID = $confParts[5];
+		} else {
+			$P = t3lib_div::_GP('P');
+
+			if (array_key_exists('pid', $P)) {
+				$pageID = $P['pid'];
+			} else {
+				$pageID = $this->findPageIdFromData($P);
+			}
 		}
-		else {
-			$P=t3lib_div::_GP('P');
-			return $P['pid'];
+
+		return $pageID;
+	}
+
+
+	/**
+	 * Try to find the current page id from the value containing the itemNode value.
+	 * 
+	 * @param array $params $_GET Parameter from linkwizard
+	 * @access private
+	 * @return integer
+	 * @author Michael Klapper <michael.klapper@aoemedia.de>
+	 */
+	private function findPageIdFromData($params) {
+		$pageID = 0;
+
+		if ( is_array($params) && array_key_exists('itemName', $params) ) {
+
+			preg_match('~data\[([^]]*)\]\[([^]]*)\]~', $params['itemName'], $matches);
+			$recordArray = t3lib_BEfunc::getRecord($matches['1'], $matches['2']);
+
+			if (is_array($recordArray)) {
+				$pageID = $recordArray['pid'];
+			}
 		}
+
+		return $pageID;
 	}
 
 	/* checks if
@@ -239,8 +276,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 			$RTEsetup = $BE_USER->getTSConfig('RTE',t3lib_BEfunc::getPagesTSconfig($RTEtsConfigParts[5]));
 			$this->pObj->thisConfig = t3lib_BEfunc::RTEsetup($RTEsetup['properties'],$RTEtsConfigParts[0],$RTEtsConfigParts[2],$RTEtsConfigParts[4]);
 		} elseif (! is_array($this->pObj->thisConfig['tx_linkhandler.']) ) {
-			$P = t3lib_div::_GP('P');
-			$pid = $P['pid'];
+			$pid = $this->getCurrentPageId();
 			$modTSconfig = $GLOBALS["BE_USER"]->getTSConfig("mod.tx_linkhandler", t3lib_BEfunc::getPagesTSconfig($pid));
 
 			$this->pObj->thisConfig['tx_linkhandler.'] = $modTSconfig['properties'];
