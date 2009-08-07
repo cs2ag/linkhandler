@@ -58,7 +58,7 @@ class tx_linkhandler_handler {
 	public function main($linktxt, $typoLinkConfiguration, $linkHandlerKeyword, $linkHandlerValue, $linkParams, $pObj) {
 		$linkConfigArray   = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
 		$generatedLink     = '';
-		$furtherLinkParams = str_replace('record:' . $linkHandlerValue, '', $linkParams); // extract link params like "target", "css-class" or "title"
+		$furtherLinkParams = str_replace($linkHandlerKeyword . $linkHandlerValue, '', $linkParams); // extract link params like "target", "css-class" or "title"
 		list ($recordTableName, $recordUid) = t3lib_div::trimExplode(':', $linkHandlerValue);
 
 		$recordArray = $this->getCurrentRecord($recordTableName, $recordUid);

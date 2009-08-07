@@ -85,7 +85,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 	}
 
 	/**
-	 * interface function. should return the correct info array that is required for the link wizard.
+	 * Interface function. should return the correct info array that is required for the link wizard.
 	 * It should detect if the current value is a link where this tabHandler should be responsible.
 	 * else it should return a emty array
 	 *
@@ -97,20 +97,20 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 	 */
 	static public function getLinkBrowserInfoArray($href, $tabsConfig) {
 		$info = array();
+		list($currentHandler, $table, $uid) = explode(":", $href);
 
-		if (strtolower(substr($href, 0, 7)) == 'record:') {
-			$parts = explode(":", $href);
-
-				// check the linkhandler TSConfig and find out  which config is responsible for the current table:
-			foreach ($tabsConfig as $key => $tabConfig) {
-				if ($parts[1] == $tabConfig['listTables']) {
+			// check the linkhandler TSConfig and find out  which config is responsible for the current table:
+		foreach ($tabsConfig as $key => $tabConfig) {
+			
+			if ($currentHandler == 'record' || $currentHandler == $tabConfig['overwriteHandler']) {
+				if ($table == $tabConfig['listTables']) {
 					$info['act'] = $key;
-				}
+				}	
 			}
-
-			$info['recordTable'] = $parts[1];
-			$info['recordUid']   = $parts[2];
 		}
+
+		$info['recordTable'] = $table;
+		$info['recordUid']   = $uid;
 
 		return $info;
 	}
@@ -217,6 +217,10 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 			$dblist->noControlPanels=1;
 			$dblist->clickMenuEnabled=0;
 			$dblist->tableList=implode(',',$tablesArr);
+
+			if (array_key_exists('overwriteHandler', $this->configuration)) {
+				$dblist->setOverwriteLinkHandler($this->configuration['overwriteHandler']);
+			}
 
 			$dblist->start($id,t3lib_div::_GP('table'),$pointer,
 				t3lib_div::_GP('search_field'),

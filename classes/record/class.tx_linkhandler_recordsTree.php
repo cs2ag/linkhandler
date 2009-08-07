@@ -38,7 +38,10 @@ if (!defined ('TYPO3_MODE'))
  */
 class tx_linkhandler_recordsTree extends localPageTree {
 
-	var $browselistObj;
+	/**
+	 * @var tx_rtehtmlarea_browse_links
+	 */
+	public $browselistObj = null;
 
 	/**
 	 * Create the page navigation tree in HTML
@@ -118,7 +121,7 @@ class tx_linkhandler_recordsTree extends localPageTree {
 		if ($this->pObj->mode!='rte') {
 				if ($this->cachedParams!='') {
 
-				}else {
+				} else {
 						$P_GET=t3lib_div::_GP('P');
 						$P3=array();
 						if (is_array($P_GET)) {

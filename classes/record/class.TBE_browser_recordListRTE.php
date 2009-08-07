@@ -42,12 +42,31 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 	var $addPassOnParams;
 
 	/**
+	 * Default value is "recored"
+	 * 
+	 * @var string
+	 */
+	private $linkHandler = 'record';
+
+	/**
 	 * set the parameters that should be added on the link, in order to keep the required vars for the linkwizard
 	 */
 	public function setAddPassOnParams($addPassOnParams) {
 		$this->addPassOnParams=$addPassOnParams;
 	}
 
+	/**
+	 * Overwrites the default linkhandler.
+	 * 
+	 * @param string $linkHandler
+	 * @access public
+	 * @return void
+	 * @author Michael Klapper <michael.klapper@aoemedia.de>
+	 */
+	public function setOverwriteLinkHandler($linkHandler) {
+		$this->linkHandler = $linkHandler;
+	}
+	
 	/**
 	 * Returns the title (based on $code) of a record (from table $table) with the proper link around (that is for "pages"-records a link to the level of that record...)
 	 *
@@ -78,13 +97,12 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 
 		if (@$this->browselistObj->mode=='rte') {
 			//used in RTE mode:
-			$aOnClick='return link_spec(\'record:'.$table.':'.$row['uid'].'\');"';
-		}
-		else {
+			$aOnClick='return link_spec(\'' . $this->linkHandler . ':'.$table.':'.$row['uid'].'\');"';
+		} else {
 			//used in wizard mode
-			$aOnClick='return link_folder(\'record:'.$table.':'.$row['uid'].'\');"';
+			$aOnClick='return link_folder(\'' . $this->linkHandler . ':'.$table.':'.$row['uid'].'\');"';
 		}
-		//$aOnClick = "return insertElement('".$table."', '".$row['uid']."', 'db', ".t3lib_div::quoteJSvalue($title).", '', '', '".$ficon."');";
+
 		$ATag = '<a href="#" onclick="'.$aOnClick.'">';
 		$ATag_e = '</a>';
 

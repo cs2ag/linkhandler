@@ -1,5 +1,7 @@
 07-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fix bug #3784: Tabs in Linkview are jumping
+	* Add feature #4183: Add parameter overwriteHandler to the tab configuration
+	* Minnor code changes
 
 03-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Minnor code changes
