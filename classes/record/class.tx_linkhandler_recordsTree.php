@@ -59,10 +59,7 @@ class tx_linkhandler_recordsTree extends localPageTree {
 		$dofiltering=False; //should the pagetree be filter to show only $onlyPids
 		$onlyPids=array();
 		if (isset($this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['onlyPids'])) {
-			$configured_onlyPids=t3lib_div::trimExplode(',',$this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['onlyPids']);
-			foreach ($configured_onlyPids as $actualPid) {
-				$onlyPids=array_merge($onlyPids,$this->_getRootLinePids($actualPid));
-			}
+			$onlyPids = t3lib_div::trimExplode(',',$this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['onlyPids']);
 			$dofiltering=TRUE;
 		}
 		foreach($treeArr as $k => $v)	{
@@ -107,16 +104,6 @@ class tx_linkhandler_recordsTree extends localPageTree {
 		return $out;
 	}
 
-	function _getRootLinePids($pid) {
-			$pids=array();
-			$sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
-			$sys_page->init(true);
-			$rootLine = $sys_page->getRootLine($pid, $mpvar);
-			foreach ($rootLine as $v) {
-				$pids[]=$v['uid'];
-			}
-			return $pids;
-	}
 	function _getaddPassOnParams() {
 		if ($this->pObj->mode!='rte') {
 				if ($this->cachedParams!='') {

@@ -132,6 +132,9 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 
 		$pagetree = t3lib_div::makeInstance('tx_linkhandler_recordsTree'); /* @var $pagetree tx_linkhandler_recordsTree */
 		$pagetree->browselistObj = $this->browseLinksObj;
+		if (array_key_exists('onlyPids', $this->configuration) && $this->configuration['onlyPids'] != '') {
+			$pagetree->expandAll = true;
+		}
 		$tree = $pagetree->getBrowsableTree();
 		$cElements = $this->expandPageRecords();
 		$content.= '
