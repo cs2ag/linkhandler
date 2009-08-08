@@ -226,7 +226,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		} else {
 			$P = t3lib_div::_GP('P');
 
-			if (array_key_exists('pid', $P)) {
+			if (is_array($P) && array_key_exists('pid', $P)) {
 				$pageID = $P['pid'];
 			} else {
 				$pageID = $this->findPageIdFromData($P);
