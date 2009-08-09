@@ -1,3 +1,8 @@
+09-08-2009 Daniel Pötzinger
+	* New configurations for recordTab: 
+		noAttributesForm=1
+		linkClassName=footnote
+	
 07-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fix bug #3784: Tabs in Linkview are jumping
 	* Add feature #4183: Add parameter overwriteHandler to the tab configuration
