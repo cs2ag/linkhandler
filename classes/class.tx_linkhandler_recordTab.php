@@ -125,9 +125,13 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 	public function getTabContent() {
 		global $LANG;
 		$content = '';
-
 		if ($this->isRTE) {
-			$content .= $this->browseLinksObj->addAttributesForm();
+			if ( !$this->configuration['noAttributesForm']) {
+				$content .= $this->browseLinksObj->addAttributesForm();
+			}
+			else {
+				$content .=$this->addDummyAttributesForm($this->configuration['linkClassName']);
+			}
 		}
 
 		$pagetree = t3lib_div::makeInstance('tx_linkhandler_recordsTree'); /* @var $pagetree tx_linkhandler_recordsTree */
@@ -243,6 +247,19 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 			// Return accumulated content:
 		return $out;
 	}
+	
+	/**
+        * returns a form element with the typical elements that are present in the RTE attributesForm, but all fields are hidden.
+        * This can be used to force a certain classname etc for the link
+        * @param string $className Clasname
+        * @return string  The HTML of the Form
+        */
+        private function addDummyAttributesForm($className='') {
+                return '<form id="ltargetform" name="ltargetform">
+                                <input type="hidden" name="anchor_class" value="'.$className.'">
+                        </form>';
+        }
+
 }
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler/classes/class.tx_linkhandler_recordTab.php']) {
