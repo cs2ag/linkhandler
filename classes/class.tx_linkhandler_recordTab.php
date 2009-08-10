@@ -128,8 +128,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 		if ($this->isRTE) {
 			if ( !$this->configuration['noAttributesForm']) {
 				$content .= $this->browseLinksObj->addAttributesForm();
-			}
-			else {
+			} elseif (array_key_exists('linkClassName', $this->configuration) && $this->configuration['linkClassName'] != '') {
 				$content .=$this->addDummyAttributesForm($this->configuration['linkClassName']);
 			}
 		}

@@ -1,3 +1,8 @@
+10-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Add some comments
+	* Update documentation
+	* Minnor code changes
+
 09-08-2009 Daniel Pötzinger
 	* New configurations for recordTab: 
 		noAttributesForm=1

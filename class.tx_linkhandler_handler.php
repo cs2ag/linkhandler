@@ -48,7 +48,7 @@ class tx_linkhandler_handler {
 	 * Process the link generation
 	 *
 	 * @param string $linktxt
-	 * @param array $typoLinkConfiguration TypoLink Configuration array
+	 * @param array  $typoLinkConfiguration TypoLink Configuration array
 	 * @param string $linkHandlerKeyword Define the identifier that an record is given
 	 * @param string $linkHandlerValue Table and uid of the requested record like "tt_news:2"
 	 * @param string $linkParams Full link params like "record:tt_news:2"
@@ -86,6 +86,9 @@ class tx_linkhandler_handler {
 	/**
 	 * Indicate that the requested link can be created or not.
 	 *
+	 * @param string $recordTableName The name of database table
+	 * @param array $linkConfigArray Global defined TypoScript cofiguration for the linkHandler
+	 * @param array $recordArray Requested record to link to it
 	 * @access protected
 	 * @return boolean
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
@@ -115,8 +118,8 @@ class tx_linkhandler_handler {
 	 *
 	 * This method keeps attention on the l18n_parent field and retrieve the original record.
 	 *
-	 * @param string $recordTableName
-	 * @param integer $recordUid
+	 * @param string $recordTableName The name of database table
+	 * @param integer $recordUid ID of the record
 	 * @access protected
 	 * @return array
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
@@ -156,6 +159,9 @@ class tx_linkhandler_handler {
 	/**
 	 * Merge all TypoScript for the typoLink from the global and local defined settings.
 	 *
+	 * @param array $linkConfigArray Global defined TypoScript cofiguration for the linkHandler
+	 * @param array $typoLinkConfigurationArray Local typolink TypoScript configuration for current link
+	 * @param array $recordTableName The name of database table
 	 * @access protected
 	 * @return array
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
