@@ -76,20 +76,19 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 	 * @param	array		Records array (from table name)
 	 * @return	string
 	 */
-	function linkWrapItems($table,$uid,$code,$row)	{
+	function linkWrapItems($table,$uid,$title,$row)	{
 		global $TCA, $BACK_PATH;
 
-		if (!$code) {
-			$code = '<i>['.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.no_title',1).']</i>';
+		if (!$title) {
+			$title = '<i>['.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.no_title',1).']</i>';
 		} else {
-			$code = htmlspecialchars(t3lib_div::fixed_lgd_cs($code,$this->fixedL));
+			$title = htmlspecialchars(t3lib_div::fixed_lgd_cs($title,$this->fixedL));
 		}
-
 
 		if ($this->browselistObj->curUrlInfo['recordTable']==$table && $this->browselistObj->curUrlInfo['recordUid']==$uid)	{
 			$curImg='<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/blinkarrow_right.gif','width="5" height="9"').' class="c-blinkArrowL" alt="" />';
 		} else {
-			$curImg='';
+			$curImg = '';
 		}
 
 		$title = t3lib_BEfunc::getRecordTitle($table,$row,FALSE,TRUE);
@@ -108,7 +107,7 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 
 		return
 				$ATag.
-				$code.$curImg.
+				$title.$curImg.
 				$ATag_e;
 	}
 
