@@ -77,7 +77,7 @@ class tx_linkhandler_recordsTree extends localPageTree {
 		$onlyPids=array();
 		if (isset($this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['onlyPids'])) {
 			$onlyPids = t3lib_div::trimExplode(',',$this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['onlyPids']);
-			if ($this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['recursive'] == 1) {
+			if ($this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['onlyPids.']['recursive'] == 1) {
 				// merge childs
 				foreach ($onlyPids as $actualPid) {
 					$onlyPids=array_merge($onlyPids,$this->_getRootLineChildPids($actualPid));
@@ -100,7 +100,7 @@ class tx_linkhandler_recordsTree extends localPageTree {
 			$cEbullet = !$this->ext_isLinkable($v['row']['doktype'],$v['row']['uid']) ?
 						'<a href="#" onclick="'.htmlspecialchars($aOnClick).'"><img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/ol/arrowbullet.gif','width="18" height="16"').' alt="" /></a>' :
 						'';
-						
+
 			if ($dofiltering && (!in_array($v['row']['uid'],$onlyPids)) ) {
 				continue;
 			} else {				$out.='
