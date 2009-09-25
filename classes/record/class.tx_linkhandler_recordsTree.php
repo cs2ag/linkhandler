@@ -44,6 +44,23 @@ class tx_linkhandler_recordsTree extends localPageTree {
 	public $browselistObj = null;
 
 	/**
+	 * returns the uid of the childs of page $pid
+	 *
+	 * @param integer $pid
+	 * @return array
+	 */
+	function _getRootLineChildPids($pid) {
+		$pids=array();
+		$sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
+		$sys_page->init(true);
+		$rootLine = $sys_page->getMenu($pid);
+		foreach ($rootLine as $v) {
+			$pids[]=$v['uid'];
+		}
+		return $pids;
+	}
+
+	/**
 	 * Create the page navigation tree in HTML
 	 *
 	 * @param array Tree array
@@ -60,7 +77,14 @@ class tx_linkhandler_recordsTree extends localPageTree {
 		$onlyPids=array();
 		if (isset($this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['onlyPids'])) {
 			$onlyPids = t3lib_div::trimExplode(',',$this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['onlyPids']);
-			$dofiltering=TRUE;
+			if ($this->browselistObj->thisConfig['tx_linkhandler.'][$this->browselistObj->act.'.']['recursive'] == 1) {
+				// merge childs
+				foreach ($onlyPids as $actualPid) {
+					$onlyPids=array_merge($onlyPids,$this->_getRootLineChildPids($actualPid));
+		}
+			}
+
+			$dofiltering=true;
 		}
 		foreach($treeArr as $k => $v)	{
 			$c++;
@@ -76,11 +100,10 @@ class tx_linkhandler_recordsTree extends localPageTree {
 			$cEbullet = !$this->ext_isLinkable($v['row']['doktype'],$v['row']['uid']) ?
 						'<a href="#" onclick="'.htmlspecialchars($aOnClick).'"><img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/ol/arrowbullet.gif','width="18" height="16"').' alt="" /></a>' :
 						'';
-			if ($dofiltering && (!in_array($v['row']['uid'],$onlyPids) )) {
+						
+			if ($dofiltering && (!in_array($v['row']['uid'],$onlyPids)) ) {
 				continue;
-			}
-			else {
-				$out.='
+			} else {				$out.='
 					<tr class="'.$bgColorClass.'">
 						<td nowrap="nowrap"'.($v['row']['_CSSCLASS'] ? ' class="'.$v['row']['_CSSCLASS'].'"' : '').'>'.
 						$v['HTML'].
