@@ -43,7 +43,7 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 
 	/**
 	 * Default value is "recored"
-	 * 
+	 *
 	 * @var string
 	 */
 	private $linkHandler = 'record';
@@ -57,7 +57,7 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 
 	/**
 	 * Overwrites the default linkhandler.
-	 * 
+	 *
 	 * @param string $linkHandler
 	 * @access public
 	 * @return void
@@ -66,7 +66,7 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 	public function setOverwriteLinkHandler($linkHandler) {
 		$this->linkHandler = $linkHandler;
 	}
-	
+
 	/**
 	 * Returns the title (based on $code) of a record (from table $table) with the proper link around (that is for "pages"-records a link to the level of that record...)
 	 *
@@ -78,6 +78,15 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 	 */
 	function linkWrapItems($table,$uid,$title,$row)	{
 		global $TCA, $BACK_PATH;
+
+			// if we handle with translation records, take sure that we refer to the localisation parent with their uid
+		if (is_array($TCA[$table]['ctrl']) && array_key_exists('transOrigPointerField', $TCA[$table]['ctrl']) ) {
+			$transOrigPointerField = $TCA[$table]['ctrl']['transOrigPointerField'];
+
+			if (t3lib_div::intval_positive($row[$transOrigPointerField]) > 0 ) {
+				$uid = $row[$transOrigPointerField];
+			}
+		}
 
 		if (!$title) {
 			$title = '<i>['.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.no_title',1).']</i>';
@@ -96,10 +105,10 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 
 		if (@$this->browselistObj->mode=='rte') {
 			//used in RTE mode:
-			$aOnClick='return link_spec(\'' . $this->linkHandler . ':'.$table.':'.$row['uid'].'\');"';
+			$aOnClick='return link_spec(\'' . $this->linkHandler . ':'.$table.':'.$uid.'\');"';
 		} else {
 			//used in wizard mode
-			$aOnClick='return link_folder(\'' . $this->linkHandler . ':'.$table.':'.$row['uid'].'\');"';
+			$aOnClick='return link_folder(\'' . $this->linkHandler . ':'.$table.':'.$uid.'\');"';
 		}
 
 		$ATag = '<a href="#" onclick="'.$aOnClick.'">';
