@@ -1,5 +1,6 @@
 21-10-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fixed Bug #3926: Omit Overlay-Records within Linkhandler-DB List
+	* Fixed furhter link params in linkhandler link processing
 
 25-09-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fixed Bug #4479: allow recursive onlyPids - Thanks to Stefano Cecere for providing the patch. 
