@@ -239,7 +239,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 
 	/**
 	 * Try to find the current page id from the value containing the itemNode value.
-	 * 
+	 *
 	 * @param array $params $_GET Parameter from linkwizard
 	 * @access private
 	 * @return integer
