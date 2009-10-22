@@ -97,6 +97,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 			$menuDef[$key]['label'] = $tabConfig['label']; // $LANG->getLL('records',1);
 			$menuDef[$key]['url'] = '#';
 			$addPassOnParams.=$this->getaddPassOnParams();
+			$addPassOnParams = t3lib_div::implodeArrayForUrl('', t3lib_div::explodeUrl2Array($addPassOnParams), '', true);
 			$menuDef[$key]['addParams'] = 'onclick="jumpToUrl(\'?act='.$key.'&editorNo='.$this->pObj->editorNo.'&contentTypo3Language='.$this->pObj->contentTypo3Language.'&contentTypo3Charset='.$this->pObj->contentTypo3Charset.$addPassOnParams.'\');return false;"';
 		}
 

@@ -1,3 +1,6 @@
+22-10-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fixed Bug #5034: URL length of tab links causes errors in IE7
+
 21-10-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fixed Bug #3926: Omit Overlay-Records within Linkhandler-DB List
 	* Fixed furhter link params in linkhandler link processing
