@@ -54,7 +54,7 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 
 	var $hookObjectsArr=array();
 
-	
+
 	/**
 	 * Constructor:
 	 * Initializes a lot of variables, setting JavaScript functions in header etc.
@@ -63,8 +63,7 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 	 */
 	function init()	{
 		global $BE_USER,$BACK_PATH,$LANG;
-		
-		
+
 		// Main GPvars:
 		$this->pointer = t3lib_div::_GP('pointer');
 		$this->bparams = t3lib_div::_GP('bparams');
@@ -76,13 +75,13 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 		$this->contentTypo3Language = t3lib_div::_GP('typo3ContentLanguage');
 		$this->contentTypo3Charset = t3lib_div::_GP('typo3ContentCharset');
 		$this->editorNo = t3lib_div::_GP('editorNo');
-		
+
 			// Find "mode"
 		$this->mode=t3lib_div::_GP('mode');
 		if (!$this->mode)	{
 			$this->mode='rte';
 		}
-		
+
 		//init hookObjectArray:
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['rtehtmlarea']['browseLinksHook'])) {
 			foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['rtehtmlarea']['browseLinksHook'] as $_classData) {
@@ -91,13 +90,13 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 						$this->hookObjectsArr[]=$_procObj;
 					}
 		}
-		
+
 			// Site URL
 		$this->siteURL = t3lib_div::getIndpEnv('TYPO3_SITE_URL');	// Current site url
-		
+
 			// the script to link to
 		$this->thisScript = t3lib_div::getIndpEnv('SCRIPT_NAME');
-		
+
 			// CurrentUrl - the current link url must be passed around if it exists
 		if ($this->mode=='wizard')	{
 			$currentLinkParts = t3lib_div::trimExplode(' ',$this->P['currentValue']);
@@ -403,12 +402,6 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 			// Finally, add the accumulated JavaScript to the template object:
 		$this->doc->JScode = $this->doc->wrapScriptTags($JScode);
 
-
-		
-		
-		
-		
-
 			// Debugging:
 		if (FALSE) debug(array(
 			'pointer' => $this->pointer,
@@ -423,10 +416,10 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 			'expandFolder' => $this->expandFolder,
 			'PM' => $this->PM,
 		),'Internal variables of Script Class:');
-		
+
 	}
-	
-	
+
+
 	/**
 	 * For RTE/link: Parses the incoming URL and determines if it's a page, file, external or mail address.
 	 *
@@ -434,7 +427,6 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 	 * @param	string		The URL of the current website (frontend)
 	 * @return	array		Array with URL information stored in assoc. keys: value, act (page, file, spec, mail), pageid, cElement, info
 	 */
-	
 	function parseCurUrl($href,$siteUrl)	{
 		$href = trim($href);
 		if ($href)	{
@@ -480,16 +472,14 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 					$info['act']='mail';
 				}
 				else {
-							
+
 				}
 			}
 			//let the hook have a look
 					foreach ($this->hookObjectsArr as $_hookObj) {
 						$info=$_hookObj->parseCurrentUrl($href,$siteUrl,$info);
-					}		
-			$info['info'] = $info['value'];		
-			
-			
+					}
+			$info['info'] = $info['value'];
 		} else {	// NO value inputted:
 			$info=array();
 			$info['info']=$GLOBALS['LANG']->getLL('none');
@@ -498,8 +488,8 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 		}
 		return $info;
 	}
-	
-	
+
+
 	/******************************************************************
 	 *
 	 * Main functions
@@ -515,12 +505,11 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 	 */
 	function main_rte($wiz=0)	{
 		global $LANG, $BE_USER, $BACK_PATH;
-		
+
 			// Starting content:
 		$content=$this->doc->startPage($LANG->getLL('Insert/Modify Link',1));
 
 			// Initializing the action value, possibly removing blinded values etc:
-				
 
 		$allowedItems = explode(',','page,file,url,mail,spec');
 		//call hook for extra options
@@ -532,12 +521,12 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 		} else {
 			$allowedItems = array_diff($allowedItems,t3lib_div::trimExplode(',',$this->thisConfig['blindLinkOptions'],1));
 		}
-		
+
 		reset($allowedItems);
 		if (!in_array($this->act,$allowedItems)) {
 			$this->act = current($allowedItems);
 		}
-		
+
 			// Making menu in top:
 		$menuDef = array();
 		if (!$wiz)	{
@@ -580,12 +569,12 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 		foreach ($this->hookObjectsArr as $_hookObj) {
 			$menuDef=$_hookObj->modifyMenuDefinition($menuDef);
 		}
-		
+
 		$content .= $this->doc->getTabMenuRaw($menuDef);
 
 			// Adding the menu and header to the top of page:
 		$content.=$this->printCurrentUrl($this->curUrlInfo['info']).'<br />';
-		
+
 			// Depending on the current action we will create the actual module content for selecting a link:
 		switch($this->act)	{
 			case 'mail':
@@ -624,7 +613,7 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 			break;
 			case 'file':
 				$content.=$this->addAttributesForm();
-				
+
 				$foldertree = t3lib_div::makeInstance('tx_rtehtmlarea_folderTree');
 				$tree=$foldertree->getBrowsableTree();
 
@@ -730,12 +719,11 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 						';
 				}
 			break;
-			
-			
+
 			case 'page':
-			
+
 				$content.=$this->addAttributesForm();
-				
+
 				$pagetree = t3lib_div::makeInstance('tx_rtehtmlarea_pageTree');
 				$tree=$pagetree->getBrowsableTree();
 				$cElements = $this->expandPage();
@@ -755,23 +743,17 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 			default:
 				foreach ($this->hookObjectsArr as $_hookObj) {
 					$content.=$_hookObj->getTab($this->act);
-				}			
-				
+				}
+
 			break;
-			
-			
-			
+
 		}
 
 			// End page, return content:
 		$content.= $this->doc->endPage();
 		return $content;
 	}
-	
-	
-
 }
-
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler/patch/class.ux_tx_rtehtmlarea_browse_links.php'])	{
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/linkhandler/patch/class.ux_tx_rtehtmlarea_browse_links.php']);

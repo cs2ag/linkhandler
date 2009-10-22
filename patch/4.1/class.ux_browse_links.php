@@ -54,7 +54,7 @@ class ux_browse_links extends browse_links {
 
 	var $hookObjectsArr=array();
 
-	
+
 	/**
 	 * Constructor:
 	 * Initializes a lot of variables, setting JavaScript functions in header etc.
@@ -78,8 +78,8 @@ class ux_browse_links extends browse_links {
 		if (!$this->mode)	{
 			$this->mode='rte';
 		}
-		
-		
+
+
 		//init hookObjectArray:
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['rtehtmlarea']['browseLinksHook'])) {
 			foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['rtehtmlarea']['browseLinksHook'] as $_classData) {
@@ -264,7 +264,7 @@ class ux_browse_links extends browse_links {
 
 			// This is JavaScript especially for the TBE Element Browser!
 		$formFieldName = 'data['.$pArr[0].']['.$pArr[1].']['.$pArr[2].']';
-		
+
 			// insertElement - Call check function (e.g. for uniqueness handling):
 		if ($pArr[4] && $pArr[5]) {
 			$JScodeCheck = '
@@ -319,7 +319,7 @@ class ux_browse_links extends browse_links {
 					focusOpenerAndClose(close);
 			';
 		}
-		
+
 		$JScode.='
 			var elRef="";
 			var targetDoc="";
@@ -388,7 +388,7 @@ class ux_browse_links extends browse_links {
 			'PM' => $this->PM,
 		),'Internal variables of Script Class:');
 	}
-	
+
 	/**
 	 * Rich Text Editor (RTE) link selector (MAIN function)
 	 * Generates the link selector for the Rich Text Editor.
@@ -451,7 +451,7 @@ class ux_browse_links extends browse_links {
 			$menuDef['spec']['addParams'] = 'onclick="jumpToUrl(\'?act=spec\');return false;"';
 		}
 		//call hook for extra options
-		foreach ($this->hookObjectsArr as $_hookObj) {		
+		foreach ($this->hookObjectsArr as $_hookObj) {
 			$menuDef=$_hookObj->modifyMenuDefinition($menuDef);
 		}
 		$content .= $this->doc->getTabMenuRaw($menuDef);
@@ -584,7 +584,7 @@ class ux_browse_links extends browse_links {
 						';
 				}
 			break;
-			case 'page':			
+			case 'page':
 				$pagetree = t3lib_div::makeInstance('rtePageTree');
 				$pagetree->thisScript = $this->thisScript;
 				$tree=$pagetree->getBrowsableTree();
@@ -606,8 +606,8 @@ class ux_browse_links extends browse_links {
 			default:
 				foreach ($this->hookObjectsArr as $_hookObj) {
 					$content.=$_hookObj->getTab($this->act);
-				}			
-				
+				}
+
 			break;
 		}
 
@@ -707,8 +707,8 @@ class ux_browse_links extends browse_links {
 		$content = $this->doc->insertStylesAndJS($content);
 		return $content;
 	}
-	
-	
+
+
 	/**
 	 * For RTE/link: Parses the incoming URL and determines if it's a page, file, external or mail address.
 	 *
@@ -761,13 +761,13 @@ class ux_browse_links extends browse_links {
 					$info['act']='mail';
 				}
 				else {
-								
+
 				}
 			}
 			//let the hook have a look
 					foreach ($this->hookObjectsArr as $_hookObj) {
 						$info=$_hookObj->parseCurrentUrl($href,$siteUrl,$info);
-					}	
+					}
 			$info['info'] = $info['value'];
 		} else {	// NO value inputted:
 			$info=array();
@@ -777,10 +777,10 @@ class ux_browse_links extends browse_links {
 		}
 		return $info;
 	}
-	
-	
-	
-	
+
+
+
+
 
 }
 
