@@ -1,4 +1,7 @@
 22-10-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fixed Bug #3928: Referenced records won't show up in Refindex
+
+22-10-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fixed Bug #5034: URL length of tab links causes errors in IE7
 
 21-10-2009 Michael Klapper <michael.klapper@aoemedia.de>

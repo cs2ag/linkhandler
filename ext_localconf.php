@@ -1,5 +1,8 @@
 <?php
-if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
+if (!defined ('TYPO3_MODE'))
+	die ('Access denied.');
+
+global $TYPO3_CONF_VARS, $_EXTKEY;
 
 if ( version_compare(TYPO3_version, '4.2.0', '<') ) {
 	//register XCLASSES (adds hooks)
@@ -15,14 +18,20 @@ if ( version_compare(TYPO3_version, '4.2.0', '<') ) {
 	}
 }
 
+	// register XCLASS (add hooks)
+if ( version_compare(TYPO3_version, '4.4.0', '<') ) {
+	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_softrefproc.php'] = t3lib_extMgm::extPath($_EXTKEY) . '/patch/class.ux_t3lib_softrefproc.php';
+}
+
 //add linkhandler for "record"
 //require_once(t3lib_extMgm::extPath($_EXTKEY) . 'class.tx_linkhandler_handler.php');
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['typolinkLinkHandler']['record'] = 'EXT:linkhandler/class.tx_linkhandler_handler.php:&tx_linkhandler_handler';
 
-//register hook
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/rtehtmlarea/mod3/class.tx_rtehtmlarea_browse_links.php']['browseLinksHook'][]='EXT:linkhandler/class.tx_linkhandler_browselinkshooks.php:tx_linkhandler_browselinkshooks';
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.browse_links.php']['browseLinksHook'][]='EXT:linkhandler/class.tx_linkhandler_browselinkshooks.php:tx_linkhandler_browselinkshooks';
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getTable'][] = 'EXT:linkhandler/class.tx_linkhandler_localRecordListGetTableHook.php:tx_linkhandler_localRecordListGetTableHook';
+// register hook
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/rtehtmlarea/mod3/class.tx_rtehtmlarea_browse_links.php']['browseLinksHook'][]='EXT:linkhandler/service/hook/class.tx_linkhandler_browselinkshooks.php:tx_linkhandler_browselinkshooks';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.browse_links.php']['browseLinksHook'][]='EXT:linkhandler/service/hook/class.tx_linkhandler_browselinkshooks.php:tx_linkhandler_browselinkshooks';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getTable'][] = 'EXT:linkhandler/service/hook/class.tx_linkhandler_localRecordListGetTableHook.php:tx_linkhandler_localRecordListGetTableHook';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_softrefproc.php']['typolinkLinkHandler']['record'] = 'EXT:linkhandler/service/hook/class.tx_linkhandler_softref_typolinkLinkHandlerHook.php:tx_linkhandler_softref_typolinkLinkHandlerHook';
 
 	// Register hook to link the "save & show" button to the single view
 include_once t3lib_extMgm::extPath($_EXTKEY) . 'service/class.tx_linkhandler_tcemain.php';
