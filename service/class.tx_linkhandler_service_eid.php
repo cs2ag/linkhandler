@@ -167,8 +167,7 @@ class tx_linkhandler_service_eid {
 			$GLOBALS['TSFE']->config['config']['simulateStaticDocuments'] = 0;
 		}
 
-		$Linkhandler = t3lib_div::makeInstance('tx_linkhandler_handler');
-		/* @var $Linkhandler tx_linkhandler_handler */
+		$Linkhandler = t3lib_div::makeInstance('tx_linkhandler_handler'); /* @var $Linkhandler tx_linkhandler_handler */
 
 		$linkString = $Linkhandler->main (
 			'',
