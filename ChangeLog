@@ -1,6 +1,7 @@
 02-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Add feature #5191: Provide XCLASS to enable bug fix #10827: Hide "Save and View"-button when editing a content-element
 	* Add some "conflicts" constraints to the ext_emconf.php
+	* Add support to add an XCLASS for alt_doc.php if allready an XCLASS exists.
 
 29-10-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fixed Bug #3928: Referenced records won't show up in Refindex
