@@ -35,7 +35,7 @@ if ( version_compare(TYPO3_version, '4.4.0', '<') ) {
 if ( version_compare(TYPO3_version, '4.3.0', '<') && is_array($configurationArray) && array_key_exists('applyXclassHideSaveAndViewButton', $configurationArray) && ($configurationArray['applyXclassHideSaveAndViewButton']) == 1) {
 	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/alt_doc.php'] = t3lib_extMgm::extPath($_EXTKEY) . '/patch/class.ux_alt_doc.php';
 }
-$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/alt_doc.php'] = t3lib_extMgm::extPath($_EXTKEY) . '/patch/class.ux_alt_doc.php';
+
 // add linkhandler for "record"
 // require_once(t3lib_extMgm::extPath($_EXTKEY) . 'class.tx_linkhandler_handler.php');
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['typolinkLinkHandler']['record'] = 'EXT:linkhandler/class.tx_linkhandler_handler.php:&tx_linkhandler_handler';
