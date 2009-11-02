@@ -4,6 +4,11 @@ if (!defined ('TYPO3_MODE'))
 
 t3lib_extMgm::addStaticFile($_EXTKEY,'static/link_handler/', 'link handler');
 
+	// hide the button saveDocView for tt_news categories
+t3lib_extMgm::addUserTSconfig('
+	options.saveDocView.tt_news_cat = 0
+');
+
 t3lib_extMgm::addPageTSConfig('
 RTE.default.tx_linkhandler {
 	tt_news {

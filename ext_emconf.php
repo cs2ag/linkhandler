@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Enables userfriendly links to records like tt_news etc... Configure new Tabs to the link-wizard. (by AOE media GmbH)',
 	'category' => 'plugin',
 	'shy' => 0,
-	'version' => '0.11.0',
+	'version' => '0.12.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
@@ -38,6 +38,8 @@ $EM_CONF[$_EXTKEY] = array(
 			'typo3' => '4.1.0-0.0.0',
 		),
 		'conflicts' => array(
+			'ch_rterecords',
+			'tinymce_rte',
 		),
 		'suggests' => array(
 		),
