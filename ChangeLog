@@ -1,5 +1,6 @@
 03-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Make the t3lib_softrefproc XCLASS optional during the extension manager.
+	* Fixed bug #5199: Replace "t3lib_div::makeInstanceClassName()"
 
 02-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Add feature #5191: Provide XCLASS to enable bug fix #10827: Hide "Save and View"-button when editing a content-element
