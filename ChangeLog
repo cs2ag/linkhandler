@@ -1,3 +1,6 @@
+09-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Keep attention on the languagevisibility XCLASS
+
 03-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Make the t3lib_softrefproc XCLASS optional during the extension manager.
 	* Fixed bug #5199: Replace "t3lib_div::makeInstanceClassName()"

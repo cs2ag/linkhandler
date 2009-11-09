@@ -33,9 +33,9 @@ if ( version_compare(TYPO3_version, '4.3.0', '<') && is_array($configurationArra
 }
 // Enalbe  bug fix #10827: Hide "Save and View"-button when editing a content-element
 if ( version_compare(TYPO3_version, '4.3.0', '<') && is_array($configurationArray) && array_key_exists('applyXclassHideSaveAndViewButton', $configurationArray) && ($configurationArray['applyXclassHideSaveAndViewButton']) == 1) {
-	if ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/alt_doc.php'] !='')
-		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/ux_alt_doc.php'] = t3lib_extMgm::extPath($_EXTKEY) . '/patch/class.ux_ux_alt_doc.php';
-	else
+	if ( t3lib_extMgm::isLoaded('languagevisibility') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/alt_doc.php'] != '' )
+		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/languagevisibility/patch/class.ux_SC_alt_doc.php'] = t3lib_extMgm::extPath($_EXTKEY) . '/patch/class.ux_ux_alt_doc.php';
+	elseif ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/alt_doc.php'] == '' ) 
 		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/alt_doc.php'] = t3lib_extMgm::extPath($_EXTKEY) . '/patch/class.ux_alt_doc.php';
 }
 
