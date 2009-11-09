@@ -6,7 +6,7 @@ t3lib_extMgm::addStaticFile($_EXTKEY,'static/link_handler/', 'link handler');
 
 	// hide the button saveDocView for tt_news categories
 t3lib_extMgm::addUserTSconfig('
-	options.saveDocView.tt_news_cat = 0
+	options.saveDocView.tt_news = 1
 ');
 
 t3lib_extMgm::addPageTSConfig('
