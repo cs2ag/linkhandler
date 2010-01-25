@@ -117,7 +117,7 @@ class tx_linkhandler_service_eid {
 
 			// check the authCode
 		if ( t3lib_div::stdAuthCode($linkParams . $this->languageId, '', 32) !== $authCode )  {
-			header('401 Access denied.');
+			header('HTTP/1.0 401 Access denied.');
 			exit('Access denied.');
 		}
 
@@ -139,9 +139,6 @@ class tx_linkhandler_service_eid {
 			$tsfeClassName   = t3lib_div::makeInstanceClassName('tslib_fe');
 			$GLOBALS['TSFE'] = new $tsfeClassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0);
 		}
-
-		if ( version_compare(TYPO3_version, '4.3.0', '>=') )
-			$GLOBALS['TSFE']->initCaches();
 
 		$GLOBALS['TSFE']->connectToMySQL();
 		$GLOBALS['TSFE']->initFEuser(); //!TODO first check if already a fe_user session exists - otherwise this line will overwrite the existing one

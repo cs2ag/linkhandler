@@ -107,30 +107,9 @@ class tx_linkhandler_tcemain {
 				$languageParam = '&L=' . $recordArray['sys_language_uid'];
 				$queryString  .= $languageParam . '&authCode=' . t3lib_div::stdAuthCode($linkParamValue . $WSPreviewValue . $recordArray['sys_language_uid'], '', 32);
 
-				$GLOBALS['_POST']['viewUrl'] = $this->buildViewUrl($previewPageId) . '?id=' . $previewPageId . $queryString;
+				$GLOBALS['_POST']['viewUrl'] = 'index.php?id=' . $previewPageId . $queryString . '&y=';
 			}
 		}
-	}
-
-	/**
-	 * Build the preview url and take care to the domain
-	 *
-	 * @param integer $previewPageId
-	 * @access protected
-	 * @return string
-	 * @author Michael Klapper <michael.klapper@aoemedia.de>
-	 */
-	protected function buildViewUrl($previewPageId) {
-		$rootLineStruct = t3lib_BEfunc::BEgetRootLine($previewPageId);
-			// check alternate Domains
-		if ($rootLineStruct) {
-			$parts = parse_url(t3lib_div::getIndpEnv('TYPO3_SITE_URL'));
-			if ( t3lib_BEfunc::getDomainStartPage($parts['host'], $parts['path']) ) {
-				$viewUrl = t3lib_BEfunc::firstDomainRecord($rootLineStruct);
-			}
-		}
-
-		return $viewUrl ? (t3lib_div::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $viewUrl : t3lib_div::getIndpEnv('TYPO3_SITE_URL');
 	}
 
 }
