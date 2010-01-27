@@ -107,7 +107,7 @@ class tx_linkhandler_tcemain {
 				$languageParam = '&L=' . $recordArray['sys_language_uid'];
 				$queryString  .= $languageParam . '&authCode=' . t3lib_div::stdAuthCode($linkParamValue . $WSPreviewValue . $recordArray['sys_language_uid'], '', 32);
 
-				$GLOBALS['_POST']['viewUrl'] = 'index.php?id=' . $previewPageId . $queryString . '&y=';
+				$GLOBALS['_POST']['viewUrl'] = '/index.php?id=' . $previewPageId . $queryString . '&y=';
 			}
 		}
 	}
