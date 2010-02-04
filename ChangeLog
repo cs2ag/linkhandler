@@ -1,4 +1,7 @@
 09-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Remove URL verification, just force "header" redirect because of problems if the requested pages is protected by HTTP authentication.
+
+09-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Keep attention on the languagevisibility XCLASS
 	* Change default value for "options.saveDocView.tt_news"
 

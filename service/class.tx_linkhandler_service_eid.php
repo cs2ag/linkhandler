@@ -192,11 +192,8 @@ class tx_linkhandler_service_eid {
 		}
 
 		$fullURL = t3lib_div::getIndpEnv('TYPO3_SITE_URL') . $queryString;
-
-			// check if the page is available
-		if (t3lib_div::getURL($fullURL) !== false)
-			header('Location: ' . $fullURL);
-
+		
+		header('Location: ' . $fullURL);
 		exit();
 	}
 }
