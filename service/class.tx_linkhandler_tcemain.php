@@ -90,8 +90,8 @@ class tx_linkhandler_tcemain {
 						// get record UID for
 					if ( array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) {
 						$id = $recordArray[$l18nPointer];
-					} elseif ( array_key_exists('t3ver_oid', $recordArray) )
-						$id = $recordArray['t3ver_oid'];
+					} //elseif ( array_key_exists('t3ver_oid', $recordArray) ) // this makes no sense because we already recive the UID of the WS-Placeholder which will be the real record in the LIVE-WS
+						// $id = $recordArray['t3ver_oid'];
 
 				} else {
 					$WSPreviewValue = '';
