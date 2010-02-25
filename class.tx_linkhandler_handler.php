@@ -128,10 +128,10 @@ class tx_linkhandler_handler {
 							? $GLOBALS['TCA'][$recordTableName]['ctrl']['transOrigPointerField']
 							: '';
 
-		$recordArray = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordUid);
+		$recordArray = $GLOBALS['TSFE']->sys_page->getRawRecord($recordTableName, $recordUid);
 
 		if ( is_array($recordArray) && (array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) ) {
-			$recordArray = $GLOBALS['TSFE']->sys_page->checkRecord($recordTableName, $recordArray[$l18nPointer]);
+			$recordArray = $GLOBALS['TSFE']->sys_page->getRawRecord($recordTableName, $recordArray[$l18nPointer]);
 		}
 
 		return $recordArray;
