@@ -75,7 +75,14 @@ class tx_linkhandler_tcemain {
 			if ($settingFound) {
 				t3lib_div::loadTCA($table);
 				$l18nPointer = ( array_key_exists('transOrigPointerField', $GLOBALS['TCA'][$table]['ctrl']) ) ? $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] : '';
-				$recordArray = t3lib_BEfunc::getRecord($table, $id);
+ 				if (!t3lib_div::testInt($id)) {
+ 					$id = $pObj->substNEWwithIDs[$id];
+ 				}
+ 				if (t3lib_div::testInt($id)) {
+ 					$recordArray = t3lib_BEfunc::getRecord($table, $id);
+ 				} else {
+ 					$recordArray = $fieldArray;
+				}
 
 				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
 					$previewPageId = t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
