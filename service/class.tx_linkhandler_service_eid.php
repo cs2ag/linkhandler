@@ -140,7 +140,7 @@ class tx_linkhandler_service_eid {
 			$GLOBALS['TSFE'] = new $tsfeClassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0);
 		}
 
-		$GLOBALS['TSFE']->connectToMySQL();
+		$GLOBALS['TSFE']->connectToDB();
 		$GLOBALS['TSFE']->initFEuser(); //!TODO first check if already a fe_user session exists - otherwise this line will overwrite the existing one
 		$GLOBALS['TSFE']->checkAlternativeIdMethods();
 
