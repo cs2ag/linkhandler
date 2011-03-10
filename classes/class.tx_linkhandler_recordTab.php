@@ -101,16 +101,14 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 
 			// check the linkhandler TSConfig and find out  which config is responsible for the current table:
 		foreach ($tabsConfig as $key => $tabConfig) {
-			
 			if ($currentHandler == 'record' || $currentHandler == $tabConfig['overwriteHandler']) {
+				$info['recordTable'] = $table;
+				$info['recordUid']   = $uid;
 				if ($table == $tabConfig['listTables']) {
 					$info['act'] = $key;
 				}	
 			}
 		}
-
-		$info['recordTable'] = $table;
-		$info['recordUid']   = $uid;
 
 		return $info;
 	}
