@@ -24,7 +24,7 @@ class ux_ux_tslib_cObj extends ux_tslib_cObj {
 		$link_param = trim($this->stdWrap($conf['parameter'],$conf['parameter.']));
 
 		$sectionMark = trim($this->stdWrap($conf['section'],$conf['section.']));
-		$sectionMark = $sectionMark ? (t3lib_div::testInt($sectionMark)?'#c':'#').$sectionMark : '';
+		$sectionMark = $sectionMark ? (t3lib_utility_Math::canBeInterpretedAsInteger($sectionMark)?'#c':'#').$sectionMark : '';
 		$initP = '?id='.$GLOBALS['TSFE']->id.'&type='.$GLOBALS['TSFE']->type;
 		$this->lastTypoLinkUrl = '';
 		$this->lastTypoLinkTarget = '';
@@ -140,7 +140,7 @@ class ux_ux_tslib_cObj extends ux_tslib_cObj {
 					if (!strcmp($link_param,''))	{$link_param=$GLOBALS['TSFE']->id;}	// If no id or alias is given
 					if ($link_params_parts[1] && !$sectionMark)	{
 						$sectionMark = trim($link_params_parts[1]);
-						$sectionMark = (t3lib_div::testInt($sectionMark)?'#c':'#').$sectionMark;
+						$sectionMark = (t3lib_utility_Math::canBeInterpretedAsInteger($sectionMark)?'#c':'#').$sectionMark;
 					}
 						// Splitting the parameter by ',' and if the array counts more than 1 element it's a id/type/? pair
 					unset($theTypeP);
@@ -150,7 +150,7 @@ class ux_ux_tslib_cObj extends ux_tslib_cObj {
 						$theTypeP = $pairParts[1];		// Overruling 'type'
 					}
 						// Checking if the id-parameter is an alias.
-					if (!t3lib_div::testInt($link_param))	{
+					if (!t3lib_utility_Math::canBeInterpretedAsInteger($link_param))	{
 						$link_param = $GLOBALS['TSFE']->sys_page->getPageIdFromAlias($link_param);
 					}
 

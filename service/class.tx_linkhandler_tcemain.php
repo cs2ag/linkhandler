@@ -56,7 +56,7 @@ class tx_linkhandler_tcemain {
 
 		if ( isset($GLOBALS['_POST']['_savedokview_x']) ) {
 			$settingFound   = false;
-			$currentPageID  = t3lib_div::intval_positive($GLOBALS['_POST']['popViewId']);
+			$currentPageID  = t3lib_utility_Math::convertToPositiveInteger($GLOBALS['_POST']['popViewId']);
 			$rootLineStruct = t3lib_BEfunc::BEgetRootLine($currentPageID);
 			$defaultPageID  = (isset($rootLineStruct[0]) && array_key_exists('uid', $rootLineStruct[0])) ? $rootLineStruct[0]['uid'] : $currentPageID ;
 
@@ -75,19 +75,19 @@ class tx_linkhandler_tcemain {
 			if ($settingFound) {
 				t3lib_div::loadTCA($table);
 				$l18nPointer = ( array_key_exists('transOrigPointerField', $GLOBALS['TCA'][$table]['ctrl']) ) ? $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] : '';
- 				if (!t3lib_div::testInt($id)) {
+ 				if (!t3lib_utility_Math::canBeInterpretedAsInteger($id)) {
  					$id = $pObj->substNEWwithIDs[$id];
  				}
- 				if (t3lib_div::testInt($id)) {
+ 				if (t3lib_utility_Math::canBeInterpretedAsInteger($id)) {
  					$recordArray = t3lib_BEfunc::getRecord($table, $id);
  				} else {
  					$recordArray = $fieldArray;
 				}
 
-				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
-					$previewPageId = t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
+				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
+					$previewPageId = t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
 				} else {
-					$previewPageId = t3lib_div::intval_positive($defaultPageID);
+					$previewPageId = t3lib_utility_Math::convertToPositiveInteger($defaultPageID);
 				}
 
 				if ($GLOBALS['BE_USER']->workspace != 0) {

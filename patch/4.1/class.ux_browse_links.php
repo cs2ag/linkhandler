@@ -741,7 +741,7 @@ class ux_browse_links extends browse_links {
 						$id = $pp[1];
 						if ($id)	{
 								// Checking if the id-parameter is an alias.
-							if (!t3lib_div::testInt($id))	{
+							if (!t3lib_utility_Math::canBeInterpretedAsInteger($id))	{
 								list($idPartR) = t3lib_BEfunc::getRecordsByField('pages','alias',$id);
 								$id=intval($idPartR['uid']);
 							}

@@ -99,7 +99,7 @@ class ux_ux_SC_alt_doc extends ux_SC_alt_doc {
 
 			// DELETE + UNDO buttons:
 		if (!$this->errorC && !$TCA[$this->firstEl['table']]['ctrl']['readOnly'] && count($this->elementsData)==1)	{
-			if ($this->firstEl['cmd']!='new' && t3lib_div::testInt($this->firstEl['uid']))	{
+			if ($this->firstEl['cmd']!='new' && t3lib_utility_Math::canBeInterpretedAsInteger($this->firstEl['uid']))	{
 
 					// Delete:
 				if ($this->firstEl['deleteAccess'] && !$TCA[$this->firstEl['table']]['ctrl']['readOnly'] && !$this->getNewIconMode($this->firstEl['table'],'disableDelete')) {
