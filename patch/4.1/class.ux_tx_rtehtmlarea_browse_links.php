@@ -452,7 +452,7 @@ class ux_tx_rtehtmlarea_browse_links extends tx_rtehtmlarea_browse_links {
 						$id = $pp[1];
 						if ($id)	{
 								// Checking if the id-parameter is an alias.
-							if (!t3lib_utility_Math::canBeInterpretedAsInteger($id))	{
+							if (!t3lib_div::testInt($id))	{
 								list($idPartR) = t3lib_BEfunc::getRecordsByField('pages','alias',$id);
 								$id=intval($idPartR['uid']);
 							}
