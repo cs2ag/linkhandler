@@ -110,7 +110,7 @@ class tx_linkhandler_tcemain {
 
 				$linkParamValue = 'record:' . $table . ':' . $id ;
 
-				$queryString   = '&eID=linkhandlerPreview&linkParams=' . $linkParamValue . $WSPreviewValue;
+				$queryString   = '&eID=linkhandlerPreview&linkParams=' . urlencode($linkParamValue . $WSPreviewValue);
 				$languageParam = '&L=' . $recordArray['sys_language_uid'];
 				$queryString  .= $languageParam . '&authCode=' . t3lib_div::stdAuthCode($linkParamValue . $WSPreviewValue . $recordArray['sys_language_uid'], '', 32);
 
