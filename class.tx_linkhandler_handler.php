@@ -96,7 +96,7 @@ class tx_linkhandler_handler {
 		$isLinkable = false;
 
 			// record type link configuration available
-		if ( is_array($recordArray) && !empty($recordArray) ) // recored available
+		if ( is_array($linkConfigArray) && array_key_exists($recordTableName . '.', $linkConfigArray) ) {
 
 			if (
 					( is_array($recordArray) && !empty($recordArray) && !isset( $TCA[$recordTableName]['ctrl']['enablecolumns']['disabled']) ) // recored available
