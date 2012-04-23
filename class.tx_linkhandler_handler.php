@@ -91,13 +91,17 @@ class tx_linkhandler_handler {
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	protected function isRecordLinkable($recordTableName, $linkConfigArray, $recordArray) {
+		global $TCA;
+
 		$isLinkable = false;
 
 			// record type link configuration available
-		if ( is_array($linkConfigArray) && array_key_exists($recordTableName . '.', $linkConfigArray) )  {
+		if ( is_array($recordArray) && !empty($recordArray) ) // recored available
 
 			if (
-					( is_array($recordArray) && !empty($recordArray) ) // recored available
+					( is_array($recordArray) && !empty($recordArray) && !isset( $TCA[$recordTableName]['ctrl']['enablecolumns']['disabled']) ) // recored available
+				|| 
+					( is_array($recordArray) && !empty($recordArray) && isset( $TCA[$recordTableName]['ctrl']['enablecolumns']['disabled'] ) && $recordArray[$TCA[$recordTableName]['ctrl']['enablecolumns']['disabled']] == 0) // record NOT hidden
 				||
 					( (int)$linkConfigArray[$recordTableName . '.']['forceLink'] === 1 ) // if the record are hidden ore someting else, force link generation
 				) {
