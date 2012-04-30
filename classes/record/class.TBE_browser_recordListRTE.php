@@ -83,7 +83,9 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 		if (is_array($TCA[$table]['ctrl']) && array_key_exists('transOrigPointerField', $TCA[$table]['ctrl']) ) {
 			$transOrigPointerField = $TCA[$table]['ctrl']['transOrigPointerField'];
 
-			if (t3lib_utility_Math::convertToPositiveInteger($row[$transOrigPointerField]) > 0 ) {
+			if ((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::convertToPositiveInteger($row[$transOrigPointerField]) > 0)
+				|| t3lib_div::t3lib_div::intval_positive($row[$transOrigPointerField]) > 0) {
+
 				$uid = $row[$transOrigPointerField];
 			}
 		}

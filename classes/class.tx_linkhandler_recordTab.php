@@ -168,7 +168,11 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 		global $TCA,$BE_USER, $BACK_PATH;
 		$out = '';
 
-		if ( $this->expandPage >= 0 && t3lib_utility_Math::canBeInterpretedAsInteger($this->expandPage) && $BE_USER->isInWebMount($this->expandPage) )	{
+		if ( $this->expandPage >= 0 
+			&& ((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::canBeInterpretedAsInteger($this->expandPage))
+				|| t3lib_div::testInt($this->expandPage))
+			&& $BE_USER->isInWebMount($this->expandPage) )	{
+			
 			$tables = '*';
 
 			if (isset($this->configuration['listTables'])) {
@@ -205,7 +209,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 
 				// Initialize the record listing:
 			$id = $this->expandPage;
-			$pointer = t3lib_utility_Math::forceIntegerInRange($this->pointer,0,100000);
+			$pointer = (version_compare(TYPO3_version,'4.6.0','>=') ? t3lib_utility_Math::forceIntegerInRange($this->pointer,0,100000) : t3lib_div::intInRange($this->pointer,0,100000);
 			$perms_clause = $GLOBALS['BE_USER']->getPagePermsClause(1);
 			$pageinfo = t3lib_BEfunc::readPageAccess($id,$perms_clause);
 

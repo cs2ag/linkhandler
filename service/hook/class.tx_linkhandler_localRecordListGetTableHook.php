@@ -105,8 +105,10 @@ class tx_linkhandler_localRecordListGetTableHook implements t3lib_localRecordLis
 			&&
 				array_key_exists('language', $BE_USER->uc['moduleData'][$moduleKey])
 			&&
-				(t3lib_utility_Math::convertToPositiveInteger($BE_USER->uc['moduleData'][$moduleKey]['language']) > 0)
+				((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::convertToPositiveInteger($BE_USER->uc['moduleData'][$moduleKey]['language']) > 0)
+					|| t3lib_div::intval_positive($BE_USER->uc['moduleData'][$moduleKey]['language']) > 0
 			) {
+					
 			$sysLanguageId = $BE_USER->uc['moduleData'][$moduleKey]['language'];
 		}
 
