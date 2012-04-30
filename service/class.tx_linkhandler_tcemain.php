@@ -89,9 +89,9 @@ class tx_linkhandler_tcemain {
 				}
 
 				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
-					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=') ? t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) : t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
+					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) : t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
 				} else {
-					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=') ? t3lib_utility_Math::convertToPositiveInteger($defaultPageID) : t3lib_div::intval_positive($defaultPageID);
+					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($defaultPageID) : t3lib_div::intval_positive($defaultPageID);
 				}
 
 				if ($GLOBALS['BE_USER']->workspace != 0) {

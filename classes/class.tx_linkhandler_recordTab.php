@@ -209,7 +209,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 
 				// Initialize the record listing:
 			$id = $this->expandPage;
-			$pointer = (version_compare(TYPO3_version,'4.6.0','>=') ? t3lib_utility_Math::forceIntegerInRange($this->pointer,0,100000) : t3lib_div::intInRange($this->pointer,0,100000);
+			$pointer = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::forceIntegerInRange($this->pointer,0,100000) : t3lib_div::intInRange($this->pointer,0,100000);
 			$perms_clause = $GLOBALS['BE_USER']->getPagePermsClause(1);
 			$pageinfo = t3lib_BEfunc::readPageAccess($id,$perms_clause);
 
