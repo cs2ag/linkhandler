@@ -56,7 +56,7 @@ class tx_linkhandler_tcemain {
 
 		if ( isset($GLOBALS['_POST']['_savedokview_x']) ) {
 			$settingFound   = false;
-			$currentPageID  = (version_compare(TYPO3_version,'4.6.0','>=') ? t3lib_utility_Math::convertToPositiveInteger($GLOBALS['_POST']['popViewId']) : t3lib_div::intval_positive($GLOBALS['_POST']['popViewId']);
+			$currentPageID  = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($GLOBALS['_POST']['popViewId']) : t3lib_div::intval_positive($GLOBALS['_POST']['popViewId']);
 			$rootLineStruct = t3lib_BEfunc::BEgetRootLine($currentPageID);
 			$defaultPageID  = (isset($rootLineStruct[0]) && array_key_exists('uid', $rootLineStruct[0])) ? $rootLineStruct[0]['uid'] : $currentPageID ;
 
