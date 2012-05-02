@@ -131,7 +131,7 @@ class tx_linkhandler_service_eid {
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	protected function initTSFE() {
-		$pid = (version_compare(TYPO3_version,'4.6.0','>=') ? t3lib_utility_Math::convertToPositiveInteger(t3lib_div::_GP('id')) : t3lib_div::intval_positive(t3lib_div::_GP('id'));
+		$pid = version_compare(TYPO3_version,'4.6.0','>=') ? t3lib_utility_Math::convertToPositiveInteger(t3lib_div::_GP('id')) : t3lib_div::intval_positive(t3lib_div::_GP('id'));
 
 		if ( version_compare(TYPO3_version, '4.3.0', '>=') ) {
 			$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0);
