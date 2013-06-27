@@ -67,9 +67,13 @@ class tx_linkhandler_handler {
 			$linkConfigArray[$recordTableName . '.']['parameter'] .= $furtherLinkParams;
 
 			$currentLinkConfigurationArray = $this->mergeTypoScript($linkConfigArray , $typoLinkConfiguration, $recordTableName);
-
+			$this->localcObj->LOAD_REGISTER(array(
+				'furtherLinkParams' => ltrim($furtherLinkParams, ' -'),
+			), 'LOAD_REGISTER');
 				// build the full link to the record
 			$generatedLink = $this->localcObj->typoLink($linktxt, $currentLinkConfigurationArray);
+
+			$this->localcObj->LOAD_REGISTER(NULL, 'RESTORE_REGISTER');
 
 			$this->updateParentLastTypoLinkMember($pObj);
 		} else {
