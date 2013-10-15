@@ -26,7 +26,7 @@ require_once PATH_tslib . 'class.tslib_pagegen.php';
 require_once PATH_tslib . 'class.tslib_fe.php';
 require_once PATH_t3lib . 'class.t3lib_page.php';
 require_once PATH_tslib . 'class.tslib_content.php';
-require_once PATH_t3lib . 'class.t3lib_userauth.php' ;
+require_once PATH_t3lib . 'class.t3lib_userauth.php';
 require_once PATH_tslib . 'class.tslib_feuserauth.php';
 require_once PATH_t3lib . 'class.t3lib_tstemplate.php';
 require_once PATH_t3lib . 'class.t3lib_cs.php';
@@ -86,7 +86,7 @@ class tx_linkhandler_service_eid {
 	/**
 	 * Contains all required values to build an WS preview link.
 	 *
-	 * The Value is seperated by ":"#
+	 * The Value is separated by ":"#
 	 * - Workspace ID
 	 * - Backend user ID
 	 * - Time to live for the WS link
@@ -97,27 +97,26 @@ class tx_linkhandler_service_eid {
 	protected $WSPreviewValue = null;
 
 	/**
-	 * @return void
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	public function __construct() {
-		$authCode         = (string)t3lib_div::_GP('authCode');
-		$linkParams       = t3lib_div::_GP('linkParams');
+		$authCode = (string)t3lib_div::_GP('authCode');
+		$linkParams = t3lib_div::_GP('linkParams');
 
 		$this->setLanguageId(t3lib_div::_GP('L'));
 
-			// extract the linkhandler and WS preview prameter
-		if ( strpos($linkParams, ';') > 0) {
-			list ($this->linkHandlerParams, $this->WSPreviewValue)  = explode(';', $linkParams);
+			// extract the link-handler and WS preview parameter
+		if (strpos($linkParams, ';') > 0) {
+			list ($this->linkHandlerParams, $this->WSPreviewValue) = explode(';', $linkParams);
 			$this->isWsPreview = true;
 		} else
 			$this->linkHandlerParams = $linkParams;
 
 		list($this->linkHandlerKeyword) = explode(':', $this->linkHandlerParams);
-		$this->linkHandlerValue         = str_replace($this->linkHandlerKeyword . ':', '', $this->linkHandlerParams);
+		$this->linkHandlerValue = str_replace($this->linkHandlerKeyword . ':', '', $this->linkHandlerParams);
 
 			// check the authCode
-		if ( t3lib_div::stdAuthCode($linkParams . $this->languageId, '', 32) !== $authCode )  {
+		if (t3lib_div::stdAuthCode($linkParams . $this->languageId, '', 32) !== $authCode) {
 			header('HTTP/1.0 401 Access denied.');
 			exit('Access denied.');
 		}
@@ -140,16 +139,16 @@ class tx_linkhandler_service_eid {
 	/**
 	 * Initializes tslib_fe and sets it to $GLOBALS['TSFE']
 	 *
-	 * @return	void
+	 * @return void
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	protected function initTSFE() {
-		$pid = version_compare(TYPO3_version,'4.6.0','>=') ? t3lib_utility_Math::convertToPositiveInteger(t3lib_div::_GP('id')) : t3lib_div::intval_positive(t3lib_div::_GP('id'));
+		$pid = version_compare(TYPO3_version, '4.6.0', '>=') ? t3lib_utility_Math::convertToPositiveInteger(t3lib_div::_GP('id')) : t3lib_div::intval_positive(t3lib_div::_GP('id'));
 
-		if ( version_compare(TYPO3_version, '4.3.0', '>=') ) {
+		if (version_compare(TYPO3_version, '4.3.0', '>=')) {
 			$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0);
 		} else {
-			$tsfeClassName   = t3lib_div::makeInstanceClassName('tslib_fe');
+			$tsfeClassName = t3lib_div::makeInstanceClassName('tslib_fe');
 			$GLOBALS['TSFE'] = new $tsfeClassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0);
 		}
 
@@ -182,9 +181,9 @@ class tx_linkhandler_service_eid {
 			$GLOBALS['TSFE']->config['config']['simulateStaticDocuments'] = 0;
 		}
 
-		$Linkhandler = t3lib_div::makeInstance('tx_linkhandler_handler'); /* @var $Linkhandler tx_linkhandler_handler */
-
-		$linkString = $Linkhandler->main (
+		/* @var $Linkhandler tx_linkhandler_handler */
+		$Linkhandler = t3lib_div::makeInstance('tx_linkhandler_handler');
+		$linkString = $Linkhandler->main(
 			'',
 			$typoLinkSettingsArray,
 			$this->linkHandlerKeyword,
@@ -195,24 +194,40 @@ class tx_linkhandler_service_eid {
 
 		if ($this->isWsPreview === true) {
 			list ($wsId, $userId, $timeToLive) = explode(':', $this->WSPreviewValue);
-
-			$queryString = 'index.php?ADMCMD_prev='.t3lib_BEfunc::compilePreviewKeyword (
-				str_replace('index.php?', '', $GLOBALS['TSFE']->cObj->lastTypoLinkLD['totalURL']) . '&ADMCMD_previewWS=' . $wsId,
-				$userId,
-				$timeToLive
-			);
+			$queryString = $this->getWorkspacePreviewUrl($wsId, $userId, $timeToLive);
 		} else {
 			$queryString = $linkString;
 		}
 
 		$fullURL = t3lib_div::getIndpEnv('TYPO3_SITE_URL') . $queryString;
-		
+
 		header('Location: ' . $fullURL);
 		exit();
 	}
+
+	/**
+	 * @param  int $workspaceId
+	 * @param  int $backendUserId
+	 * @param  int $timeToLive
+	 * @return string
+	 */
+	private function getWorkspacePreviewUrl($workspaceId, $backendUserId, $timeToLive) {
+		$previewKeyword = 'index.php?ADMCMD_prev=';
+		$getVarsStr = str_replace('index.php?', '', $GLOBALS['TSFE']->cObj->lastTypoLinkLD['totalURL']) . '&ADMCMD_previewWS=' . $workspaceId;
+
+		if (t3lib_extMgm::isLoaded('version') && class_exists('Tx_Version_Preview')) {
+			/** @var Tx_Version_Preview $previewObject */
+			$previewObject = t3lib_div::makeInstance('Tx_Version_Preview');
+			$previewKeyword .= $previewObject->compilePreviewKeyword($getVarsStr, $backendUserId, $timeToLive);
+		} else {
+			$previewKeyword .= t3lib_BEfunc::compilePreviewKeyword($getVarsStr, $backendUserId, $timeToLive);
+		}
+		return $previewKeyword;
+	}
 }
 
-$LinkhandlerService = t3lib_div::makeInstance('tx_linkhandler_service_eid'); /* @var $LinkhandlerService tx_linkhandler_service_eid */
+/* @var $LinkhandlerService tx_linkhandler_service_eid */
+$LinkhandlerService = t3lib_div::makeInstance('tx_linkhandler_service_eid');
 $LinkhandlerService->process();
 
 ?>
