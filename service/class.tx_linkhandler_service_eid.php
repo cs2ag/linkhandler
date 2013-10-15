@@ -81,7 +81,7 @@ class tx_linkhandler_service_eid {
 	 *
 	 * @var integer
 	 */
-	protected $languageId = 0;
+	protected $languageId = null;
 
 	/**
 	 * Contains all required values to build an WS preview link.
@@ -103,7 +103,8 @@ class tx_linkhandler_service_eid {
 	public function __construct() {
 		$authCode         = (string)t3lib_div::_GP('authCode');
 		$linkParams       = t3lib_div::_GP('linkParams');
-		$this->languageId = t3lib_div::_GP('L');
+
+		$this->setLanguageId(t3lib_div::_GP('L'));
 
 			// extract the linkhandler and WS preview prameter
 		if ( strpos($linkParams, ';') > 0) {
@@ -122,6 +123,18 @@ class tx_linkhandler_service_eid {
 		}
 
 		$this->initTSFE();
+	}
+
+	/**
+	 * @param  integer $languageId
+	 */
+	private function setLanguageId($languageId) {
+		if (is_numeric($languageId)) {
+			$languageId = intval($languageId);
+			if ($languageId >= 0) {
+				$this->languageId = $languageId;
+			}
+		}
 	}
 
 	/**
@@ -157,10 +170,11 @@ class tx_linkhandler_service_eid {
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	public function process() {
-		$typoLinkSettingsArray = array (
-			'returnLast'       => 'url',
-			'additionalParams' => '&L=' . $this->languageId
-		);
+		$typoLinkSettingsArray = array('returnLast' => 'url');
+
+		if ($this->languageId) {
+			$typoLinkSettingsArray['additionalParams'] = '&L=' . $this->languageId;
+		}
 
 			// if we need a WS preview link we need to disable the realUrl and simulateStaticDocuments
 		if ($this->isWsPreview === true) {
