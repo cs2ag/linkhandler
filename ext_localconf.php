@@ -2,7 +2,6 @@
 if (!defined ('TYPO3_MODE'))
 	die ('Access denied.');
 
-global $TYPO3_CONF_VARS, $_EXTKEY;
 $configurationArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$_EXTKEY]);
 
 /**
