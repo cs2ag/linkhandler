@@ -25,6 +25,9 @@
 if (!defined ('TYPO3_MODE'))
 	die ('Access denied.');
 
+$extensionPath = t3lib_extMgm::extPath('linkhandler');
+require_once($extensionPath.'../../../typo3/class.browse_links.php');
+
 /**
  * Class which generates the page tree for records, specific version for linkhandler extension
  *  -> shows records on the selected page and makes them clickable to get the link

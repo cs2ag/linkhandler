@@ -24,7 +24,7 @@
 
 if ( version_compare(TYPO3_version, '4.4.0', '<') ) {
 	require_once t3lib_extMgm::extPath('linkhandler') . 'patch/interfaces/interface.softref_typolinkLinkHandlerHook.php';
-} else {
+} else if (version_compare(TYPO3_version, '6.1.99', '<')) {
 	require_once PATH_t3lib . 'interfaces/interface.softref_typolinkLinkHandlerHook.php';
 }
 

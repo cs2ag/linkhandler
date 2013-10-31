@@ -49,7 +49,6 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getT
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_softrefproc.php']['typolinkLinkHandler']['record'] = 'EXT:linkhandler/service/hook/class.tx_linkhandler_softref_typolinkLinkHandlerHook.php:tx_linkhandler_softref_typolinkLinkHandlerHook';
 
 	// Register hook to link the "save & show" button to the single view of an record
-include_once t3lib_extMgm::extPath($_EXTKEY) . 'service/class.tx_linkhandler_tcemain.php';
 $GLOBALS ['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = 'EXT:' . $_EXTKEY . '/service/class.tx_linkhandler_tcemain.php:tx_linkhandler_tcemain';
 
 	// Register eID for the link generation used by the "save & show" button - hook

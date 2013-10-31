@@ -22,15 +22,16 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once PATH_tslib . 'class.tslib_pagegen.php';
-require_once PATH_tslib . 'class.tslib_fe.php';
-require_once PATH_t3lib . 'class.t3lib_page.php';
-require_once PATH_tslib . 'class.tslib_content.php';
-require_once PATH_t3lib . 'class.t3lib_userauth.php';
-require_once PATH_tslib . 'class.tslib_feuserauth.php';
-require_once PATH_t3lib . 'class.t3lib_tstemplate.php';
-require_once PATH_t3lib . 'class.t3lib_cs.php';
-require_once t3lib_extMgm::extPath('linkhandler') . 'class.tx_linkhandler_handler.php';
+if (version_compare(TYPO3_version, '6.1.99', '<')) {
+	require_once PATH_tslib . 'class.tslib_pagegen.php';
+	require_once PATH_tslib . 'class.tslib_fe.php';
+	require_once PATH_t3lib . 'class.t3lib_page.php';
+	require_once PATH_tslib . 'class.tslib_content.php';
+	require_once PATH_t3lib . 'class.t3lib_userauth.php';
+	require_once PATH_tslib . 'class.tslib_feuserauth.php';
+	require_once PATH_t3lib . 'class.t3lib_tstemplate.php';
+	require_once PATH_t3lib . 'class.t3lib_cs.php';
+}
 
 /**
  * eID script
@@ -143,7 +144,7 @@ class tx_linkhandler_service_eid {
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	protected function initTSFE() {
-		$pid = version_compare(TYPO3_version, '4.6.0', '>=') ? t3lib_utility_Math::convertToPositiveInteger(t3lib_div::_GP('id')) : t3lib_div::intval_positive(t3lib_div::_GP('id'));
+		$pid = version_compare(TYPO3_version, '4.6.0', '>=') ? t3lib_utility_Math::convertToPositiveInteger(t3lib_div::_GP('id')) : intval(t3lib_div::_GP('id'));
 
 		if (version_compare(TYPO3_version, '4.3.0', '>=')) {
 			$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0);

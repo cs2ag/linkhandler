@@ -25,10 +25,6 @@
 if (!defined ('TYPO3_MODE'))
 	die ('Access denied.');
 
-require_once t3lib_extMgm::extPath('linkhandler') . 'classes/record/class.tx_linkhandler_recordsTree.php';
-require_once t3lib_extMgm::extPath('linkhandler') . 'classes/record/class.TBE_browser_recordListRTE.php';
-require_once t3lib_extMgm::extPath('linkhandler') . 'classes/interface.tx_linkhandler_tabHandler.php';
-
 /**
  * hook to adjust linkwizard (linkbrowser)
  *
@@ -170,7 +166,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 
 		if ( $this->expandPage >= 0 
 			&& ((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::canBeInterpretedAsInteger($this->expandPage))
-				|| t3lib_div::testInt($this->expandPage))
+				|| \TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($this->expandPage))
 			&& $BE_USER->isInWebMount($this->expandPage) )	{
 			
 			$tables = '*';

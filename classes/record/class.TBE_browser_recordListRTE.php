@@ -84,7 +84,7 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 			$transOrigPointerField = $TCA[$table]['ctrl']['transOrigPointerField'];
 
 			if ((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::convertToPositiveInteger($row[$transOrigPointerField]) > 0)
-				|| t3lib_div::intval_positive($row[$transOrigPointerField]) > 0) {
+				|| intval($row[$transOrigPointerField]) > 0) {
 
 				$uid = $row[$transOrigPointerField];
 			}

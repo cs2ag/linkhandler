@@ -56,7 +56,7 @@ class tx_linkhandler_tcemain {
 
 		if ( isset($GLOBALS['_POST']['_savedokview_x']) ) {
 			$settingFound   = false;
-			$currentPageID  = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($GLOBALS['_POST']['popViewId']) : t3lib_div::intval_positive($GLOBALS['_POST']['popViewId']);
+			$currentPageID  = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($GLOBALS['_POST']['popViewId']) : intval($GLOBALS['_POST']['popViewId']);
 			$rootLineStruct = t3lib_BEfunc::BEgetRootLine($currentPageID);
 			$defaultPageID  = (isset($rootLineStruct[0]) && array_key_exists('uid', $rootLineStruct[0])) ? $rootLineStruct[0]['uid'] : $currentPageID ;
 
@@ -89,9 +89,9 @@ class tx_linkhandler_tcemain {
 				}
 
 				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
-					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) : t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
+					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) : intval($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
 				} else {
-					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($defaultPageID) : t3lib_div::intval_positive($defaultPageID);
+					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($defaultPageID) : intval($defaultPageID);
 				}
 
 				if ($GLOBALS['BE_USER']->workspace != 0) {

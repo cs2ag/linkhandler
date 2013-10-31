@@ -38,12 +38,9 @@ if (!defined ('TYPO3_MODE'))
 // (for TYPO3 4.x usage this interface is part of the patch)
 if ( version_compare(TYPO3_version, '4.2.0', '<') ) {
 	require_once t3lib_extMgm::extPath('linkhandler') . 'patch/interfaces/interface.t3lib_browselinkshook.php';
-} else {
+} else if (version_compare(TYPO3_version, '6.1.99', '<')) {
 	require_once PATH_t3lib . 'interfaces/interface.t3lib_browselinkshook.php';
 }
-
-require_once (t3lib_extMgm::extPath('linkhandler').'classes/class.tx_linkhandler_recordTab.php');
-
 
 class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 

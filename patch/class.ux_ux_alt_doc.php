@@ -22,7 +22,9 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once PATH_typo3 . 'alt_doc.php';
+if (version_compare(TYPO3_version, '6.1.99', '<')) {
+	require_once PATH_typo3 . 'alt_doc.php';
+}
 
 /**
  * This XCLASS provide the bug fix #10827: Hide "Save and View"-button when editing a content-element

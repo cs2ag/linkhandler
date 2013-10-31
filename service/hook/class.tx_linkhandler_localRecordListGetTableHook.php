@@ -22,7 +22,9 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once PATH_t3lib . 'interfaces/interface.t3lib_localrecordlistgettablehook.php';
+if (version_compare(TYPO3_version, '6.1.99', '<')) {
+	require_once PATH_t3lib . 'interfaces/interface.t3lib_localrecordlistgettablehook.php';
+}
 
 /**
  * {@inheritdoc}
@@ -106,7 +108,7 @@ class tx_linkhandler_localRecordListGetTableHook implements t3lib_localRecordLis
 				array_key_exists('language', $BE_USER->uc['moduleData'][$moduleKey])
 			&&
 				((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::convertToPositiveInteger($BE_USER->uc['moduleData'][$moduleKey]['language']) > 0)
-					|| t3lib_div::intval_positive($BE_USER->uc['moduleData'][$moduleKey]['language']) > 0)
+					|| intval($BE_USER->uc['moduleData'][$moduleKey]['language']) > 0)
 			) {
 
 			$sysLanguageId = $BE_USER->uc['moduleData'][$moduleKey]['language'];
