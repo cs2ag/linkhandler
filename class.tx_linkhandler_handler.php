@@ -202,6 +202,8 @@ class tx_linkhandler_handler {
 		if ( is_array($typoLinkConfigurationArray) && !empty($typoLinkConfigurationArray) ) {
 			if ( array_key_exists('parameter.', $typoLinkConfigurationArray) )
 				unset($typoLinkConfigurationArray['parameter.']);
+			if ( array_key_exists('parameter', $typoLinkConfigurationArray) )
+				unset($typoLinkConfigurationArray['parameter']);				
 
 			$linkConfigArray[$recordTableName . '.'] = array_merge($linkConfigArray[$recordTableName . '.'], $typoLinkConfigurationArray);
 		}
