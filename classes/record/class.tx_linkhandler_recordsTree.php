@@ -156,13 +156,13 @@ class tx_linkhandler_recordsTree extends localPageTree {
 	 * @return	string		Link-wrapped input string
 	 */
 	function PM_ATagWrap($icon,$cmd,$bMark='')	{
-		if ($bMark)	{
-			$anchor = '#'.$bMark;
-			$name=' name="'.$bMark.'"';
+		$name = '';
+		if ($bMark) {
+			$anchor = '#' . $bMark;
+			$name = ' name=' . $bMark;
 		}
-		$aOnClick = "return jumpToUrl('".$this->thisScript.'?PM='.$cmd.$this->_getaddPassOnParams()."','".$anchor."');";
-
-		return '<a href="#"'.$name.' onclick="'.htmlspecialchars($aOnClick).'">'.$icon.'</a>';
+		$aOnClick = 'return jumpToUrl(' . \TYPO3\CMS\Core\Utility\GeneralUtility::quoteJSvalue($this->getThisScript() . 'PM=' . $cmd.$this->_getaddPassOnParams()) . ',' . \TYPO3\CMS\Core\Utility\GeneralUtility::quoteJSvalue($anchor) . ');';
+		return '<a href="#"' . htmlspecialchars($name) . ' onclick="' . htmlspecialchars($aOnClick) . '">' . $icon . '</a>';
 	}
 }
 
