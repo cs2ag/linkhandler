@@ -76,12 +76,12 @@ class tx_linkhandler_tcemain {
 				t3lib_div::loadTCA($table);
 				$l18nPointer = ( array_key_exists('transOrigPointerField', $GLOBALS['TCA'][$table]['ctrl']) ) ? $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] : '';
  				if ((version_compare(TYPO3_version,'4.6.0','>=') && !t3lib_utility_Math::canBeInterpretedAsInteger($id))
- 					|| !t3lib_div::testInt($id)) {
+ 					|| !t3lib_utility_Math::canBeInterpretedAsInteger($id)) {
 
  					$id = $pObj->substNEWwithIDs[$id];
  				}
  				if ((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::canBeInterpretedAsInteger($id))
- 					|| t3lib_div::testInt($id)) {
+ 					|| t3lib_utility_Math::canBeInterpretedAsInteger($id)) {
 
  					$recordArray = t3lib_BEfunc::getRecord($table, $id);
  				} else {
